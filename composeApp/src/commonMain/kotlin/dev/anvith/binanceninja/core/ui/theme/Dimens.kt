@@ -1,0 +1,33 @@
+package dev.anvith.binanceninja.core.ui.theme
+
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+object Dimens {
+
+    val radiusButton = 8.dp
+    val keyline = 16.dp
+    val spaceMin = 1.dp
+    val spaceXTiny = 2.dp
+    val spaceTiny = 4.dp
+    val spaceXXSmall = 6.dp
+    val spaceXSmall = 8.dp
+    val spaceSmall = 10.dp
+    val spaceNormal = 12.dp
+    val spaceLarge = 16.dp
+    val spaceXLarge = 18.dp
+
+    val textXXSmall = 10.sp
+    val textXSmall = 12.sp
+    val textSmall = 14.sp
+    val textNormal = 16.sp
+    val textLarge = 18.sp
+    val textXLarge = 20.sp
+    val textXXLarge = 22.sp
+    val textXXXLarge = 24.sp
+
+    val elevation_normal = 4.dp
+    val elevation_large = 8.dp
+
+
+}

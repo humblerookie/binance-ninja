@@ -1,3 +1,5 @@
+package dev.anvith.binanceninja
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -16,19 +18,22 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import dev.anvith.binanceninja.features.ui.CreateFilterScreen
-import dev.anvith.binanceninja.features.ui.ViewFiltersScreen
 import dev.anvith.binanceninja.core.ui.theme.AppText
 import dev.anvith.binanceninja.core.ui.theme.BinanceNinjaTheme
 import dev.anvith.binanceninja.core.ui.theme.TextModifier
 import dev.anvith.binanceninja.core.ui.theme.ThemeColors
+import me.tatarka.inject.annotations.Inject
 
+
+typealias App = @Composable () -> Unit
+
+@Inject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
+fun App(appPresenter: AppPresenter) {
     BinanceNinjaTheme {
         ProvideStrings {
-            TabNavigator(CreateFilterScreen) {
+            TabNavigator(appPresenter.getChildren().first()) {
                 Scaffold(
                     content = {
                         Box(modifier = Modifier.padding(it)) {
@@ -48,8 +53,9 @@ fun App() {
                     },
                     bottomBar = {
                         NavigationBar {
-                            TabNavigationItem(CreateFilterScreen)
-                            TabNavigationItem(ViewFiltersScreen)
+                            appPresenter.getChildren().map {
+                                TabNavigationItem(it)
+                            }
                         }
                     }
                 )

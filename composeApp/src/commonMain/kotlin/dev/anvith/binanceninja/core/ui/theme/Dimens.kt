@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.sp
 object Dimens {
 
     val radiusButton = 8.dp
+    val radiusBorder =4.dp
+    val radiusHuge =50.dp
     val keyline = 16.dp
     val spaceMin = 1.dp
     val spaceXTiny = 2.dp
@@ -29,5 +31,12 @@ object Dimens {
     val elevation_normal = 4.dp
     val elevation_large = 8.dp
 
+    val iconSmall =28.dp
+    val iconNormal =64.dp
+
+    val borderNormal = 4.dp
+    val borderSmall = 2.dp
+
+    val listBlockNormal = 120.dp
 
 }

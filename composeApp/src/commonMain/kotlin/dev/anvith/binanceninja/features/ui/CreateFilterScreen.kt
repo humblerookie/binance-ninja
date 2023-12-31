@@ -15,14 +15,15 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import cafe.adriel.lyricist.strings
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
@@ -31,19 +32,26 @@ import dev.anvith.binanceninja.core.ui.components.PrimaryButton
 import dev.anvith.binanceninja.core.ui.components.Space
 import dev.anvith.binanceninja.core.ui.theme.AppText
 import dev.anvith.binanceninja.core.ui.theme.Dimens
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.ActionTypeChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.AmountChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.CreateFilter
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromMerchant
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.IsRestricted
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MaxChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MinChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.State
 
 
-object CreateFilterScreen : Tab {
+class CreateFilterScreen(
+    private val presenter: CreateFilterPresenter
+) : Tab {
     override val options: TabOptions
-        @Composable
-        get() {
+        @Composable get() {
             val title = strings.tabCreateFilter
             val icon = rememberVectorPainter(image = Icons.Default.Create)
             return remember {
                 TabOptions(
-                    index = 0u,
-                    title = title,
-                    icon = icon
+                    index = 0u, title = title, icon = icon
 
                 )
             }
@@ -51,30 +59,68 @@ object CreateFilterScreen : Tab {
 
     @Composable
     override fun Content() {
-        Column(Modifier.padding(Dimens.keyline).verticalScroll(rememberScrollState())) {
-            BuySellAction()
+        val state by presenter.state.collectAsState()
+        println("State $state")
+        CreateFilterContent(
+            state = state,
+        )
+    }
+
+    @Composable
+    fun CreateFilterContent(state: State) {
+        Column(
+            Modifier.padding(horizontal = Dimens.keyline).verticalScroll(rememberScrollState())
+        ) {
+            Space(height = Dimens.keyline)
+            BuySellAction(state.isBuy, onCheckChanged = {
+                presenter.dispatchEvent(ActionTypeChanged(it))
+            })
             Space(height = Dimens.spaceLarge)
-            AmountFilter()
+            PriceRangeFilter(state.min, state.max, onMinChanged = {
+                presenter.dispatchEvent(MinChanged(it))
+            }) {
+                presenter.dispatchEvent(MaxChanged(it))
+            }
             Space(height = Dimens.spaceLarge)
-            MiscOptions()
-            CreateFilterButton()
+            AmountFilter(state.amount, onChanged = {
+                presenter.dispatchEvent(AmountChanged(it))
+            })
+            Space(height = Dimens.spaceLarge)
+            MiscOptions(
+                fromMerchant = state.fromMerchant,
+                isRestricted = state.isRestricted,
+                onMerchantOptionChanged = {
+                    presenter.dispatchEvent(FromMerchant(it))
+                },
+                onRestrictedOptionChanged = {
+                    presenter.dispatchEvent(IsRestricted(it))
+                },
+            )
+            Space(height = Dimens.spaceLarge)
+            CreateFilterButton {
+                presenter.dispatchEvent(CreateFilter)
+            }
             Space(height = Dimens.keyline)
         }
     }
 
-
     @Composable
-    private fun MiscOptions() {
+    private fun MiscOptions(
+        fromMerchant: Boolean,
+        isRestricted: Boolean,
+        onMerchantOptionChanged: (Boolean) -> Unit,
+        onRestrictedOptionChanged: (Boolean) -> Unit,
+    ) {
         AppText.H5(text = strings.miscRequirements)
         val labels = strings.miscOptions
+        val actions = listOf(onMerchantOptionChanged, onRestrictedOptionChanged)
+        val values = listOf(fromMerchant, isRestricted)
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Dimens.keyline)
+            modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.keyline)
         ) {
             Column(Modifier.padding(vertical = Dimens.spaceNormal)) {
-                labels.forEach {
-                    MiscOption(it)
+                labels.forEachIndexed { i, it ->
+                    MiscOption(it, values[i], actions[i])
                 }
 
             }
@@ -82,12 +128,11 @@ object CreateFilterScreen : Tab {
     }
 
     @Composable
-    private fun MiscOption(label: String) {
-        var isChecked by remember { mutableStateOf(false) }
+    private fun MiscOption(label: String, isChecked: Boolean, onChanged: (Boolean) -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = isChecked,
-                onCheckedChange = { isChecked = it },
+                onCheckedChange = onChanged,
                 enabled = true,
             )
             AppText.H5(text = label)
@@ -95,15 +140,18 @@ object CreateFilterScreen : Tab {
     }
 
     @Composable
-    private fun AmountFilter() {
+    private fun PriceRangeFilter(
+        min: String, max: String, onMinChanged: (String) -> Unit, onMaxChanged: (String) -> Unit
+    ) {
         val radioOptions = listOf(
-            strings.labelGreaterThan,
-            strings.labelLessThan
+            strings.labelGreaterThan, strings.labelLessThan
         )
-        AppText.H5(text = strings.selectAmount)
+        val items = listOf(min, max)
+        val callbacks = listOf(onMinChanged, onMaxChanged)
+        AppText.H5(text = strings.selectPrice)
         Row {
             radioOptions.forEachIndexed { index, label ->
-                AmountInput(label)
+                AmountInput(label, TextFieldValue(items[index]), callbacks[index])
                 if (index != radioOptions.lastIndex) {
                     Space(width = Dimens.keyline)
                 }
@@ -113,18 +161,41 @@ object CreateFilterScreen : Tab {
     }
 
     @Composable
-    private fun RowScope.AmountInput(label: String, modifier: Modifier = Modifier) {
-        var content by remember { mutableStateOf("") }
+    private fun AmountFilter(
+        amount: String, onChanged: (String) -> Unit, modifier: Modifier = Modifier
+    ) {
+        AppText.H5(text = strings.selectAmount)
+        Row {
+            Card(
+                modifier = modifier.weight(1f).padding(vertical = Dimens.keyline)
+            ) {
+                AppText.InputNormal(
+                    value = amount,
+                    onValueChange = onChanged,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    modifier = Modifier.padding(Dimens.keyline).fillMaxWidth()
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun RowScope.AmountInput(
+        label: String,
+        value: TextFieldValue,
+        onChanged: (String) -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
         Card(
-            modifier = modifier
-                .weight(1f)
-                .padding(vertical = Dimens.keyline)
+            modifier = modifier.weight(1f).padding(vertical = Dimens.keyline)
         ) {
             AppText.Body1(text = label, modifier = Modifier.padding(Dimens.spaceSmall))
             AppText.InputNormal(
-                value = content,
+                value = value.copy(selection = TextRange(value.text.length)),
                 onValueChange = {
-                    content = it
+                    onChanged(it.text)
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number
@@ -135,30 +206,27 @@ object CreateFilterScreen : Tab {
     }
 
     @Composable
-    private fun CreateFilterButton() {
+    private fun CreateFilterButton(onClick: () -> Unit) {
         PrimaryButton(
             label = strings.actionCreateFilter,
-            onClick = {},
+            onClick = onClick,
             modifier = Modifier.fillMaxWidth()
         )
     }
 
     @Composable
-    private fun BuySellAction() {
+    private fun BuySellAction(isBuy: Boolean, onCheckChanged: (isChecked: Boolean) -> Unit) {
         AppText.H5(text = strings.buySellPrompt)
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Dimens.keyline)
+            modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.keyline)
         ) {
             Space(height = Dimens.keyline)
-            var checkedState by remember { mutableStateOf(true) }
             AppSwitch(
                 onLabel = strings.actionBuy,
                 offLabel = strings.actionSell,
-                isChecked = checkedState,
+                isChecked = isBuy,
                 modifier = Modifier.padding(horizontal = Dimens.keyline),
-                onCheckChanged = { checkedState = !checkedState }
+                onCheckChanged = onCheckChanged
             )
             Spacer(modifier = Modifier.height(Dimens.spaceNormal))
         }

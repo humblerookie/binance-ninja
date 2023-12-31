@@ -1,9 +1,9 @@
 package dev.anvith.binanceninja.core.ui.data
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
-@Stable
-data class IList<T>(val list: List<T>):List<T> by list
+@Immutable
+data class IList<T>(val list: List<T>) : List<T> by list
 
 
 fun <T> List<T>.lock(): IList<T> = IList(toList())

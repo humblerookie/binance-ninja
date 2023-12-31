@@ -39,7 +39,6 @@ import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromMercha
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.IsRestricted
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MaxChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MinChanged
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.State
 
 
 class CreateFilterScreen(
@@ -59,47 +58,67 @@ class CreateFilterScreen(
 
     @Composable
     override fun Content() {
-        val state by presenter.state.collectAsState()
-        println("State $state")
+        println("Parenttt")
         CreateFilterContent(
-            state = state,
+            onPrimaryActionChanged = {
+                presenter.dispatchEvent(ActionTypeChanged(it))
+            },
+            onMinChanged = {
+                presenter.dispatchEvent(MinChanged(it))
+            },
+            onMaxChanged = {
+                presenter.dispatchEvent(MaxChanged(it))
+            },
+            onAmountChanged = {
+                presenter.dispatchEvent(AmountChanged(it))
+            },
+            onMerchantOptionChanged = {
+                presenter.dispatchEvent(FromMerchant(it))
+            },
+            onRestrictedOptionChanged = {
+                presenter.dispatchEvent(IsRestricted(it))
+            },
+            onCreateFilter = {
+                presenter.dispatchEvent(CreateFilter)
+            }
         )
     }
 
     @Composable
-    fun CreateFilterContent(state: State) {
+    fun CreateFilterContent(
+        onPrimaryActionChanged: (Boolean) -> Unit,
+        onMinChanged: (String) -> Unit,
+        onMaxChanged: (String) -> Unit,
+        onAmountChanged: (String) -> Unit,
+        onMerchantOptionChanged: (Boolean) -> Unit,
+        onRestrictedOptionChanged: (Boolean) -> Unit,
+        onCreateFilter: () -> Unit
+    ) {
+
+        val state by presenter.state.collectAsState()
         Column(
             Modifier.padding(horizontal = Dimens.keyline).verticalScroll(rememberScrollState())
         ) {
             Space(height = Dimens.keyline)
-            BuySellAction(state.isBuy, onCheckChanged = {
-                presenter.dispatchEvent(ActionTypeChanged(it))
-            })
+            BuySellAction(state.isBuy, onPrimaryActionChanged)
             Space(height = Dimens.spaceLarge)
-            PriceRangeFilter(state.min, state.max, onMinChanged = {
-                presenter.dispatchEvent(MinChanged(it))
-            }) {
-                presenter.dispatchEvent(MaxChanged(it))
-            }
+            PriceRangeFilter(
+                state.min,
+                state.max,
+                onMinChanged = onMinChanged,
+                onMaxChanged = onMaxChanged
+            )
             Space(height = Dimens.spaceLarge)
-            AmountFilter(state.amount, onChanged = {
-                presenter.dispatchEvent(AmountChanged(it))
-            })
+            AmountFilter(state.amount, onAmountChanged)
             Space(height = Dimens.spaceLarge)
             MiscOptions(
                 fromMerchant = state.fromMerchant,
                 isRestricted = state.isRestricted,
-                onMerchantOptionChanged = {
-                    presenter.dispatchEvent(FromMerchant(it))
-                },
-                onRestrictedOptionChanged = {
-                    presenter.dispatchEvent(IsRestricted(it))
-                },
+                onMerchantOptionChanged = onMerchantOptionChanged,
+                onRestrictedOptionChanged = onRestrictedOptionChanged,
             )
             Space(height = Dimens.spaceLarge)
-            CreateFilterButton {
-                presenter.dispatchEvent(CreateFilter)
-            }
+            CreateFilterButton(onCreateFilter)
             Space(height = Dimens.keyline)
         }
     }
@@ -164,6 +183,7 @@ class CreateFilterScreen(
     private fun AmountFilter(
         amount: String, onChanged: (String) -> Unit, modifier: Modifier = Modifier
     ) {
+
         AppText.H5(text = strings.selectAmount)
         Row {
             Card(

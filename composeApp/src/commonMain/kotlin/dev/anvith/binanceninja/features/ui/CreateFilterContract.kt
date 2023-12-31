@@ -1,5 +1,8 @@
 package dev.anvith.binanceninja.features.ui
 
+import dev.anvith.binanceninja.core.ui.data.IMap
+import dev.anvith.binanceninja.core.ui.data.emptyIMap
+
 interface CreateFilterContract {
     sealed class Event {
         data object CreateFilter : Event()
@@ -19,7 +22,7 @@ interface CreateFilterContract {
         val fromMerchant: Boolean = false,
         val isRestricted: Boolean = false,
         val amount: String = "",
-        val errors: Map<ErrorTarget, Boolean> = emptyMap()
+        val errors: IMap<ErrorTarget, Boolean> = emptyIMap()
     )
 
     enum class ErrorTarget {

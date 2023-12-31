@@ -1,4 +1,4 @@
-package dev.anvith.binanceninja.core.ui.theme
+package dev.anvith.binanceninja.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
@@ -6,4 +6,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-expect fun font(name: String, res: String, weight: FontWeight, style: FontStyle): Font
+expect fun font(
+    name: String,
+    res: String,
+    weight: FontWeight,
+    style: FontStyle
+): Font

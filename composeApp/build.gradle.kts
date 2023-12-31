@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -35,10 +36,15 @@ kotlin {
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
+        iosTarget.binaries{
+            framework {
+                baseName = "ComposeApp"
+                isStatic = true
+            }
+            findTest(NativeBuildType.DEBUG)?.linkerOpts = mutableListOf("-lsqlite3")
+            findTest(NativeBuildType.RELEASE)?.linkerOpts = mutableListOf("-lsqlite3")
         }
+
     }
 
     sourceSets {

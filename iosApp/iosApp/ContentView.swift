@@ -3,16 +3,29 @@ import SwiftUI
 import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
+
+ let homeViewControllerComponent: InjectHomeViewControllerComponent
+    
+    init(homeViewControllerComponent: InjectHomeViewControllerComponent) {
+          self.homeViewControllerComponent = homeViewControllerComponent
+
+  	}
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        homeViewControllerComponent.homeViewControllerFactory()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ContentView: View {
+    let homeViewControllerComponent: InjectHomeViewControllerComponent
+
+     init(homeViewControllerComponent: InjectHomeViewControllerComponent) {
+            self.homeViewControllerComponent = homeViewControllerComponent
+
+     }
     var body: some View {
-        ComposeView()
+        ComposeView(homeViewControllerComponent: homeViewControllerComponent)
                 .ignoresSafeArea(.keyboard)
                 .onAppear{
                     let appearance = UINavigationBarAppearance()

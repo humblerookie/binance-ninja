@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
 @Composable
-fun Space(width: Dp? = null, height: Dp? = null) {
+fun Space(width: Dp? = null, height: Dp? = null, modifier: Modifier=Modifier) {
     Spacer(
-        modifier = Modifier
+        modifier = modifier
             .width(width ?: Dp.Hairline)
             .height(height ?: Dp.Hairline)
     )

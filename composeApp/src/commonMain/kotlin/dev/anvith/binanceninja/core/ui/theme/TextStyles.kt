@@ -5,7 +5,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 
 object AppText {
 
@@ -84,8 +86,33 @@ object AppText {
     }
 
     @Composable
+    fun Body1(
+        text: AnnotatedString,
+        textModifier: TextModifier = TextModifier.default,
+        modifier: Modifier = Modifier
+    ) {
+        TextModifier.size(Dimens.textSmall)
+            .lineHeight(Dimens.textXXLarge)
+            .weight(FontWeight.Medium)
+            .copy(textModifier)
+            .applyToText(text = text, modifier = modifier)
+    }
+
+    @Composable
     fun Body2(
         text: String,
+        textModifier: TextModifier = TextModifier.default,
+        modifier: Modifier = Modifier
+    ) {
+        TextModifier.size(Dimens.textSmall)
+            .weight(FontWeight.Normal)
+            .copy(textModifier)
+            .applyToText(text = text, modifier = modifier)
+    }
+
+    @Composable
+    fun Body2(
+        text: AnnotatedString,
         textModifier: TextModifier = TextModifier.default,
         modifier: Modifier = Modifier
     ) {
@@ -153,6 +180,7 @@ object AppText {
         textModifier: TextModifier = TextModifier.default,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
         keyboardActions: KeyboardActions = KeyboardActions.Default,
+        isError: Boolean = false
     ) {
         val style = TextModifier.size(Dimens.textSmall)
             .lineHeight(Dimens.textXXLarge)
@@ -167,6 +195,36 @@ object AppText {
             label = label,
             textStyle = style,
             keyboardActions = keyboardActions,
+            isError = isError,
+
+            )
+    }
+
+    @Composable
+    fun InputNormal(
+        value: TextFieldValue,
+        onValueChange: (TextFieldValue) -> Unit,
+        modifier: Modifier = Modifier,
+        label: @Composable (() -> Unit)? = null,
+        textModifier: TextModifier = TextModifier.default,
+        keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+        keyboardActions: KeyboardActions = KeyboardActions.Default,
+        isError: Boolean = false
+    ) {
+        val style = TextModifier.size(Dimens.textSmall)
+            .lineHeight(Dimens.textXXLarge)
+            .weight(FontWeight.Medium)
+            .copy(textModifier)
+            .style()
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            keyboardOptions = keyboardOptions,
+            modifier = modifier,
+            label = label,
+            textStyle = style,
+            keyboardActions = keyboardActions,
+            isError = isError,
         )
     }
 

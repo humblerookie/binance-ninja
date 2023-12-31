@@ -1,4 +1,4 @@
-package dev.anvith.binanceninja.ui.theme
+package dev.anvith.binanceninja.core.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font

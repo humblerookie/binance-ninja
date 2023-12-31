@@ -11,7 +11,7 @@ plugins {
 sqldelight {
     databases {
         create("NinjaDatabase") {
-            packageName.set("dev.anvith.binanceninja")
+            packageName.set("dev.anvith.binanceninja.data.cache")
             dialect(libs.sqldelight.sqlite.dialect)
             schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
             verifyMigrations.set(true)
@@ -45,23 +45,38 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            api(libs.compose.ui.tooling.preview)
             api(libs.compose.ui.tooling.core)
+            api(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android.driver)
         }
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(libs.bundles.compose)
                 implementation(libs.bundles.voyager)
+                implementation(libs.inject.runtime)
                 api(libs.lyricist.core)
+                api(libs.kotlinx.coroutines)
+                implementation(libs.sqldelight.extensions.coroutines)
+                api(libs.napier)
+
             }
 
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        iosMain.dependencies{
+            implementation(libs.sqldelight.native.driver)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.sqldelight.jvm.driver)
         }
 
     }
@@ -69,6 +84,11 @@ kotlin {
     //This is how we include ksp in multiplatform
     dependencies {
         add("kspCommonMainMetadata", libs.lyricist.processor)
+        add("kspCommonMainMetadata", libs.inject.processor)
+        add("kspAndroid", libs.inject.processor)
+        add("kspIosArm64", libs.inject.processor)
+        add("kspIosSimulatorArm64", libs.inject.processor)
+        add("kspDesktop", libs.inject.processor)
     }
 }
 
@@ -109,6 +129,12 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.6"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

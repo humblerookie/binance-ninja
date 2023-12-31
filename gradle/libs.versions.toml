@@ -20,6 +20,10 @@ ksp-version="1.9.21-1.0.16"
 lyricist="1.6.2"
 realm="1.13.0"
 sqldelight="2.0.1"
+inject="0.6.3"
+kotlinx-coroutines = "1.7.3"
+kotlinx-date-time = "0.5.0"
+napier = "2.6.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -47,8 +51,16 @@ voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", vers
 lyricist-core = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 lyricist-processor = { module = "cafe.adriel.lyricist:lyricist-processor", version.ref = "lyricist" }
 sqldelight-sqlite-dialect = { module = "app.cash.sqldelight:sqlite-3-35-dialect", version.ref = "sqldelight" }
-
-
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+inject-runtime= { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "inject" }
+inject-processor= { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "inject" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
+sqldelight-extensions-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+napier= { module = "io.github.aakira:napier", version.ref = "napier" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -57,6 +69,8 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-version" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
 compose = [ "compose-runtime", "compose-foundation", "compose-ui",  "compose-material3", "compose-resources"]

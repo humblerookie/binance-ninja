@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -41,6 +42,9 @@ interface TextModifier {
     fun applyToText(text: String, modifier: Modifier)
 
     @Composable
+    fun applyToText(text: AnnotatedString, modifier: Modifier)
+
+    @Composable
     fun style(): TextStyle
 
     companion object : TextModifier {
@@ -75,7 +79,18 @@ interface TextModifier {
         }
 
         @Composable
-        override fun applyToText(text: String, modifier: Modifier) {
+        override fun applyToText(
+            text: String,
+            modifier: Modifier,
+        ) {
+            //Do Nothing, Let subclasses decide composable implementation
+        }
+
+        @Composable
+        override fun applyToText(
+            text: AnnotatedString,
+            modifier: Modifier,
+        ) {
             //Do Nothing, Let subclasses decide composable implementation
         }
 
@@ -160,6 +175,21 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
             modifier = modifier
         )
     }
+
+    @Composable
+    override fun applyToText(text: AnnotatedString, modifier: Modifier) {
+        Text(
+            text = text,
+            lineHeight = lineHeight ?: TextUnit.Unspecified,
+            color = color ?: ThemeColors.onSurface,
+            fontSize = size ?: TextUnit.Unspecified,
+            fontFamily = font ?: getFontFamily(),
+            fontWeight = weight ?: FontWeight.Normal,
+            letterSpacing = letterSpacing ?: TextUnit.Unspecified,
+            modifier = modifier
+        )
+    }
+
 
     @Composable
     override fun style(): TextStyle {

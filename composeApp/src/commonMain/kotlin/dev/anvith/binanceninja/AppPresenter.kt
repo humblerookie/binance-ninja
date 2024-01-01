@@ -40,14 +40,16 @@ class AppPresenter(
     fun getChildren(): IList<Tab> {
         if (!::children.isInitialized) {
             children = listOf(
-                CreateFilterScreen(
+                CreateFilterScreen.also {
                     createFilterPresenterFactory(
                         repository,
                         createFilterValidator,
                         dispatcherProvider
-                    )
-                ),
-                ViewFiltersScreen(viewFiltersPresenterFactory(repository, dispatcherProvider))
+                    ).bind(it)
+                },
+                ViewFiltersScreen.also {
+                    viewFiltersPresenterFactory(repository, dispatcherProvider).bind(it)
+                }
             ).lock()
         }
         return children

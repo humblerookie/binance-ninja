@@ -27,4 +27,6 @@ interface Strings {
     val errorMinMaxEmpty: String
     val errorAmountEmpty: String
     val errorNoFilters: String
+    val filterCreationMessage: String
+    val errorInvalidInput: String
 }

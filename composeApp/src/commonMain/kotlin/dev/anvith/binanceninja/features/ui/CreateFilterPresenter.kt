@@ -2,8 +2,10 @@ package dev.anvith.binanceninja.features.ui
 
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.ui.presentation.BasePresenter
+import dev.anvith.binanceninja.core.ui.presentation.SideEffect.MiscEffect
 import dev.anvith.binanceninja.data.cache.FilterRepository
 import dev.anvith.binanceninja.domain.models.FilterModel
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.ActionTypeChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.AmountChanged
@@ -61,14 +63,15 @@ class CreateFilterPresenter(
         if (errors.isEmpty()) {
             val model = FilterModel(
                 isBuy = currentState.isBuy,
-                min = currentState.min.trim().toDoubleOrNull(),
-                max = currentState.max.trim().toDoubleOrNull(),
+                min = currentState.min.text.trim().toDoubleOrNull(),
+                max = currentState.max.text.trim().toDoubleOrNull(),
                 fromMerchant = currentState.fromMerchant,
                 isRestricted = currentState.isRestricted,
-                amount = currentState.amount.toDouble()
+                amount = currentState.amount.text.toDouble()
             )
             launch {
                 repository.insertFilter(model)
+                sideEffect(MiscEffect(Effect.FilterCreationSuccess))
             }
 
         }

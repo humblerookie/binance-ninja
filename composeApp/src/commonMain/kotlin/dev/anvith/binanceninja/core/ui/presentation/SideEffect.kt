@@ -4,8 +4,8 @@ sealed interface SideEffect {
 
     data class Navigate(val route: String) : SideEffect
 
-    data class DisplayToast(val message: String) : SideEffect
+    data class DisplayMessage(val message: String) : SideEffect
 
-    sealed interface MiscEffect : SideEffect
+    data class MiscEffect<T>(val data: T) : SideEffect
 
 }

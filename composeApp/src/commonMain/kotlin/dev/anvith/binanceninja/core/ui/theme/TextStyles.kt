@@ -209,7 +209,8 @@ object AppText {
         textModifier: TextModifier = TextModifier.default,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
         keyboardActions: KeyboardActions = KeyboardActions.Default,
-        isError: Boolean = false
+        isError: Boolean = false,
+        supportingText: @Composable (() -> Unit)? = null,
     ) {
         val style = TextModifier.size(Dimens.textSmall)
             .lineHeight(Dimens.textXXLarge)
@@ -225,6 +226,7 @@ object AppText {
             textStyle = style,
             keyboardActions = keyboardActions,
             isError = isError,
+            supportingText = supportingText
         )
     }
 

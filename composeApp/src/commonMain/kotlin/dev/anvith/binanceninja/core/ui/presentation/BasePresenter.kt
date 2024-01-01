@@ -32,12 +32,11 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
     private val viewModelScope: CoroutineScope =
         CoroutineScope(SupervisorJob() + dispatcherProvider.main())
 
-    val state: StateFlow<S>
-        get() = _state.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            this.initState(),
-        )
+    val state: StateFlow<S> = _state.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        this.initState(),
+    )
 
     protected fun launch(
         context: CoroutineContext = EmptyCoroutineContext,
@@ -60,4 +59,24 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
         },
     )
 
+    protected fun sideEffect(event: SideEffect) {
+        launch {
+            _events.send(event)
+        }
+    }
+
+    companion object {
+        val presenters = mutableMapOf<String, BasePresenter<*, *>>()
+        inline fun <reified T> getPresenter(key: String): T {
+            return presenters[key] as T
+        }
+
+        inline fun removeBinding(key: String) {
+            presenters.remove(key)
+        }
+    }
+
+    fun bind(screen: PresenterScreen) {
+        presenters[screen.key] = this
+    }
 }

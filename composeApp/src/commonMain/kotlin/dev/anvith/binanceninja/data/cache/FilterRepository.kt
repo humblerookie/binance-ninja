@@ -1,9 +1,11 @@
 package dev.anvith.binanceninja.data.cache
 
+import app.cash.sqldelight.coroutines.asFlow
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.di.AppScope
 import dev.anvith.binanceninja.domain.mappers.FilterMapper
 import dev.anvith.binanceninja.domain.models.FilterModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -20,7 +22,9 @@ class FilterRepository(
     }
 
     suspend fun getFilters() = withContext(dispatcherProvider.io()) {
-        queries.getAllFilters().executeAsList().map { mapper.toDomain(it) }
+        queries.getAllFilters().asFlow().map { it.executeAsList() }.map { filters ->
+            filters.map { mapper.toDomain(it) }
+        }
     }
 
     fun getCurrencyFilters(currency: String) =

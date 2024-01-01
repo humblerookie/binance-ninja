@@ -2,8 +2,10 @@ package dev.anvith.binanceninja.features.ui
 
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.ui.presentation.BasePresenter
+import dev.anvith.binanceninja.core.ui.presentation.SideEffect.MiscEffect
 import dev.anvith.binanceninja.data.cache.FilterRepository
 import dev.anvith.binanceninja.domain.models.FilterModel
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.ActionTypeChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.AmountChanged
@@ -69,6 +71,7 @@ class CreateFilterPresenter(
             )
             launch {
                 repository.insertFilter(model)
+                sideEffect(MiscEffect(Effect.FilterCreationSuccess))
             }
 
         }

@@ -26,7 +26,11 @@ interface CreateFilterContract {
         val errors: IMap<ErrorTarget, Boolean> = emptyIMap()
     )
 
+    sealed class Effect {
+        data object FilterCreationSuccess : Effect()
+    }
+
     enum class ErrorTarget {
-        MIN_MAX, AMOUNT
+        MIN,MAX, AMOUNT
     }
 }

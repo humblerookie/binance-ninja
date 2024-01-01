@@ -8,9 +8,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import cafe.adriel.lyricist.ProvideStrings
 import cafe.adriel.lyricist.strings
@@ -18,6 +25,8 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import dev.anvith.binanceninja.core.ui.components.LocalSnackbarProvider
+import dev.anvith.binanceninja.core.ui.components.getSnackbar
 import dev.anvith.binanceninja.core.ui.theme.AppText
 import dev.anvith.binanceninja.core.ui.theme.BinanceNinjaTheme
 import dev.anvith.binanceninja.core.ui.theme.TextModifier
@@ -34,31 +43,37 @@ fun App(appPresenter: AppPresenter) {
     BinanceNinjaTheme {
         ProvideStrings {
             TabNavigator(appPresenter.getChildren().first()) {
-                Scaffold(
-                    content = {
-                        Box(modifier = Modifier.padding(it)) {
-                            CurrentTab()
-                        }
-                    },
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                AppText.H3(
-                                    text = strings.appName,
-                                    textModifier = TextModifier.color(ThemeColors.onPrimary)
-                                )
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary)
-                        )
-                    },
-                    bottomBar = {
-                        NavigationBar {
-                            appPresenter.getChildren().map {
-                                TabNavigationItem(it)
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
+                val provider by remember { mutableStateOf(getSnackbar(scope, snackbarHostState)) }
+                CompositionLocalProvider(LocalSnackbarProvider provides provider) {
+                    Scaffold(
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
+                        content = {
+                            Box(modifier = Modifier.padding(it)) {
+                                CurrentTab()
+                            }
+                        },
+                        topBar = {
+                            TopAppBar(
+                                title = {
+                                    AppText.H3(
+                                        text = strings.appName,
+                                        textModifier = TextModifier.color(ThemeColors.onPrimary)
+                                    )
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary)
+                            )
+                        },
+                        bottomBar = {
+                            NavigationBar {
+                                appPresenter.getChildren().map {
+                                    TabNavigationItem(it)
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

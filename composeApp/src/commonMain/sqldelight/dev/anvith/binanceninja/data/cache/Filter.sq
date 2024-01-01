@@ -13,13 +13,13 @@ CREATE TABLE Filter (
 );
 
 getAllFilters:
-SELECT * FROM Filter;
+SELECT * FROM Filter ORDER BY id DESC;
 
 getFiltersByCurrency:
 SELECT * FROM Filter WHERE sourceCurrency = ?;
 
 addFilter:
-INSERT INTO Filter (isBuy, min, max, fromMerchant, isRestricted, amount, sourceCurrency) VALUES ?;
+INSERT INTO Filter (isBuy, min, max, fromMerchant, isRestricted, amount, sourceCurrency,targetCurrency) VALUES ?;
 
 removeFilter:
 DELETE FROM Filter WHERE id = ?;

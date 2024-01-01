@@ -36,20 +36,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.lyricist.strings
-import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.anvith.binanceninja.core.ui.components.Space
 import dev.anvith.binanceninja.core.ui.data.IList
+import dev.anvith.binanceninja.core.ui.presentation.PresenterTab
+import dev.anvith.binanceninja.core.ui.presentation.getPresenter
 import dev.anvith.binanceninja.core.ui.theme.AppText
 import dev.anvith.binanceninja.core.ui.theme.Dimens
 import dev.anvith.binanceninja.core.ui.theme.TextModifier
 import dev.anvith.binanceninja.core.ui.theme.ThemeColors
 import dev.anvith.binanceninja.core.ui.theme.alpha38
 import dev.anvith.binanceninja.domain.models.FilterModel
+import dev.anvith.binanceninja.features.ui.ViewFiltersContract.Event.RemoveFilter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
+object ViewFiltersScreen: PresenterTab() {
     override val options: TabOptions
         @Composable
         get() {
@@ -67,6 +69,7 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
 
     @Composable
     override fun Content() {
+        val presenter: ViewFiltersPresenter = getPresenter()
         val state by presenter.state.collectAsState()
         when {
             state.isLoading -> {
@@ -82,7 +85,9 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
             }
 
             else -> {
-                Filters(state.filters)
+                Filters(state.filters,{
+                    presenter.dispatchEvent(RemoveFilter(it))
+                })
             }
         }
 
@@ -118,13 +123,13 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
     }
 
     @Composable
-    private fun Filters(filters: IList<FilterModel>) {
+    private fun Filters(filters: IList<FilterModel>, onRemove:(FilterModel)->Unit) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.keyline)) {
             item {
                 Space(Dimens.keyline)
             }
             items(filters) { filter ->
-                FilterItem(filter)
+                FilterItem(filter,onRemove)
             }
             item {
                 Space(Dimens.keyline)
@@ -134,7 +139,7 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
 
 
     @Composable
-    fun FilterItem(item: FilterModel) {
+    fun FilterItem(item: FilterModel, onRemove: (FilterModel) -> Unit) {
         Card(
             Modifier
                 .padding(horizontal = Dimens.keyline)
@@ -181,15 +186,15 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
 
                 }
                 Space(width = Dimens.spaceSmall)
-                DeleteButton()
+                DeleteButton { onRemove(item) }
             }
         }
     }
 
     @Composable
-    private fun RowScope.DeleteButton(modifier: Modifier = Modifier) {
+    private fun RowScope.DeleteButton(modifier: Modifier = Modifier, onRemove: () -> Unit) {
         IconButton(
-            onClick = {},
+            onClick = onRemove,
             modifier = modifier.size(Dimens.iconSmall).background(
                 color = ThemeColors.secondary,
                 shape = RoundedCornerShape(

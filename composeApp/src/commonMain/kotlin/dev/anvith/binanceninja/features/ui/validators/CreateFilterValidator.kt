@@ -15,7 +15,13 @@ class CreateFilterValidator {
         val max = state.max.text.trim().toDoubleOrNull()
         val errors = mutableMapOf<ErrorTarget, Boolean>()
         if (min == null && max == null) {
-            errors[ErrorTarget.MIN_MAX] = true
+            val areBothEmpty = state.min.text.isEmpty() && state.max.text.isEmpty()
+            errors[ErrorTarget.MIN] = areBothEmpty || state.min.text.isNotEmpty()
+            errors[ErrorTarget.MAX] = areBothEmpty || state.max.text.isNotEmpty()
+        }
+        if (min!= null && max != null && min > max) {
+            errors[ErrorTarget.MIN] = true
+            errors[ErrorTarget.MAX] = true
         }
         val amount = state.amount.text.trim().toDoubleOrNull()
         if (amount == null) {

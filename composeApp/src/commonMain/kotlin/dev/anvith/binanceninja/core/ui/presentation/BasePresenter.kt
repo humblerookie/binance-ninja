@@ -59,4 +59,24 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
         },
     )
 
+    protected fun sideEffect(event: SideEffect) {
+        launch {
+            _events.send(event)
+        }
+    }
+
+    companion object {
+        val presenters = mutableMapOf<String, BasePresenter<*, *>>()
+        inline fun <reified T> getPresenter(key: String): T {
+            return presenters[key] as T
+        }
+
+        inline fun removeBinding(key: String) {
+            presenters.remove(key)
+        }
+    }
+
+    fun bind(screen: PresenterScreen) {
+        presenters[screen.key] = this
+    }
 }

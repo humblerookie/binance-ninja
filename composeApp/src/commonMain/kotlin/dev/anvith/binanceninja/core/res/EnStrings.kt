@@ -60,5 +60,9 @@ val EnStrings = object : Strings {
 
     override val errorAmountEmpty = "Provide a quantity"
 
+    override val errorInvalidInput= "Invalid input"
+
     override val errorNoFilters = "You currently have no filters added."
+
+    override val filterCreationMessage = "Filter created successfully"
 }

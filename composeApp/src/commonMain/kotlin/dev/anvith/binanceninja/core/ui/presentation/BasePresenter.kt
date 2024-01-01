@@ -32,12 +32,11 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
     private val viewModelScope: CoroutineScope =
         CoroutineScope(SupervisorJob() + dispatcherProvider.main())
 
-    val state: StateFlow<S>
-        get() = _state.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            this.initState(),
-        )
+    val state: StateFlow<S> = _state.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        this.initState(),
+    )
 
     protected fun launch(
         context: CoroutineContext = EmptyCoroutineContext,

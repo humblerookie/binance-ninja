@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import cafe.adriel.lyricist.strings
@@ -50,52 +49,45 @@ class CreateFilterScreen(
             val icon = rememberVectorPainter(image = Icons.Default.Create)
             return remember {
                 TabOptions(
-                    index = 0u, title = title, icon = icon
-
+                    index = 0u,
+                    title = title,
+                    icon = icon,
                 )
             }
         }
 
     @Composable
     override fun Content() {
-        println("Parenttt")
-        CreateFilterContent(
-            onPrimaryActionChanged = {
-                presenter.dispatchEvent(ActionTypeChanged(it))
-            },
-            onMinChanged = {
-                presenter.dispatchEvent(MinChanged(it))
-            },
-            onMaxChanged = {
-                presenter.dispatchEvent(MaxChanged(it))
-            },
-            onAmountChanged = {
-                presenter.dispatchEvent(AmountChanged(it))
-            },
-            onMerchantOptionChanged = {
-                presenter.dispatchEvent(FromMerchant(it))
-            },
-            onRestrictedOptionChanged = {
-                presenter.dispatchEvent(IsRestricted(it))
-            },
-            onCreateFilter = {
-                presenter.dispatchEvent(CreateFilter)
-            }
-        )
+        CreateFilterContent(onPrimaryActionChanged = {
+            presenter.dispatchEvent(ActionTypeChanged(it))
+        }, onMinChanged = {
+            presenter.dispatchEvent(MinChanged(it))
+        }, onMaxChanged = {
+            presenter.dispatchEvent(MaxChanged(it))
+        }, onAmountChanged = {
+            presenter.dispatchEvent(AmountChanged(it))
+        }, onMerchantOptionChanged = {
+            presenter.dispatchEvent(FromMerchant(it))
+        }, onRestrictedOptionChanged = {
+            presenter.dispatchEvent(IsRestricted(it))
+        }, onCreateFilter = {
+            presenter.dispatchEvent(CreateFilter)
+        })
     }
 
     @Composable
     fun CreateFilterContent(
         onPrimaryActionChanged: (Boolean) -> Unit,
-        onMinChanged: (String) -> Unit,
-        onMaxChanged: (String) -> Unit,
-        onAmountChanged: (String) -> Unit,
+        onMinChanged: (TextFieldValue) -> Unit,
+        onMaxChanged: (TextFieldValue) -> Unit,
+        onAmountChanged: (TextFieldValue) -> Unit,
         onMerchantOptionChanged: (Boolean) -> Unit,
         onRestrictedOptionChanged: (Boolean) -> Unit,
         onCreateFilter: () -> Unit
     ) {
 
         val state by presenter.state.collectAsState()
+
         Column(
             Modifier.padding(horizontal = Dimens.keyline).verticalScroll(rememberScrollState())
         ) {
@@ -160,7 +152,10 @@ class CreateFilterScreen(
 
     @Composable
     private fun PriceRangeFilter(
-        min: String, max: String, onMinChanged: (String) -> Unit, onMaxChanged: (String) -> Unit
+        min: TextFieldValue,
+        max: TextFieldValue,
+        onMinChanged: (TextFieldValue) -> Unit,
+        onMaxChanged: (TextFieldValue) -> Unit,
     ) {
         val radioOptions = listOf(
             strings.labelGreaterThan, strings.labelLessThan
@@ -170,7 +165,7 @@ class CreateFilterScreen(
         AppText.H5(text = strings.selectPrice)
         Row {
             radioOptions.forEachIndexed { index, label ->
-                AmountInput(label, TextFieldValue(items[index]), callbacks[index])
+                PriceRangeInput(label, items[index], callbacks[index])
                 if (index != radioOptions.lastIndex) {
                     Space(width = Dimens.keyline)
                 }
@@ -181,9 +176,8 @@ class CreateFilterScreen(
 
     @Composable
     private fun AmountFilter(
-        amount: String, onChanged: (String) -> Unit, modifier: Modifier = Modifier
+        amount: TextFieldValue, onChanged: (TextFieldValue) -> Unit, modifier: Modifier = Modifier
     ) {
-
         AppText.H5(text = strings.selectAmount)
         Row {
             Card(
@@ -202,10 +196,10 @@ class CreateFilterScreen(
     }
 
     @Composable
-    private fun RowScope.AmountInput(
+    private fun RowScope.PriceRangeInput(
         label: String,
         value: TextFieldValue,
-        onChanged: (String) -> Unit,
+        onChanged: (TextFieldValue) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Card(
@@ -213,10 +207,8 @@ class CreateFilterScreen(
         ) {
             AppText.Body1(text = label, modifier = Modifier.padding(Dimens.spaceSmall))
             AppText.InputNormal(
-                value = value.copy(selection = TextRange(value.text.length)),
-                onValueChange = {
-                    onChanged(it.text)
-                },
+                value = value,
+                onValueChange = onChanged,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number
                 ),

@@ -5,6 +5,7 @@ import dev.anvith.binanceninja.di.AppScope
 import me.tatarka.inject.annotations.Provides
 
 
+
 internal actual interface PlatformDbComponent {
 
     @Provides

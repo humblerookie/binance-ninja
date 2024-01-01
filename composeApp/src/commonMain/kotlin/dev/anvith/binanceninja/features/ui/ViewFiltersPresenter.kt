@@ -24,9 +24,10 @@ class ViewFiltersPresenter(
             updateState {
                 it.copy(isLoading = true)
             }
-            val filters = repository.getFilters()
-            updateState { state ->
-                state.copy(filters = filters.lock(), isLoading = false)
+            repository.getFilters().collect {
+                updateState { state ->
+                    state.copy(filters = it.lock(), isLoading = false)
+                }
             }
         }
     }

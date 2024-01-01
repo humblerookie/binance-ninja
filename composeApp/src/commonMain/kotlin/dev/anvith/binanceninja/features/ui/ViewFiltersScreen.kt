@@ -68,7 +68,6 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
     @Composable
     override fun Content() {
         val state by presenter.state.collectAsState()
-        MessageSection(strings.errorNoFilters)
         when {
             state.isLoading -> {
                 Loader()
@@ -98,7 +97,12 @@ class ViewFiltersScreen(private val presenter: ViewFiltersPresenter) : Tab {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(painterResource("empty-asset.xml"), null, contentScale = ContentScale.Inside, modifier = Modifier.size(Dimens.iconNormal))
+            Image(
+                painterResource("empty-asset.xml"),
+                null,
+                contentScale = ContentScale.Inside,
+                modifier = Modifier.size(Dimens.iconNormal)
+            )
             Space(height = Dimens.spaceXLarge)
             AppText.Body1(
                 text = message,

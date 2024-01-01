@@ -61,11 +61,11 @@ class CreateFilterPresenter(
         if (errors.isEmpty()) {
             val model = FilterModel(
                 isBuy = currentState.isBuy,
-                min = currentState.min.trim().toDoubleOrNull(),
-                max = currentState.max.trim().toDoubleOrNull(),
+                min = currentState.min.text.trim().toDoubleOrNull(),
+                max = currentState.max.text.trim().toDoubleOrNull(),
                 fromMerchant = currentState.fromMerchant,
                 isRestricted = currentState.isRestricted,
-                amount = currentState.amount.toDouble()
+                amount = currentState.amount.text.toDouble()
             )
             launch {
                 repository.insertFilter(model)

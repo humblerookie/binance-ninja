@@ -11,13 +11,13 @@ import me.tatarka.inject.annotations.Inject
 class CreateFilterValidator {
 
     fun validate(state: CreateFilterContract.State): IMap<ErrorTarget, Boolean> {
-        val min = state.min.trim().toDoubleOrNull()
-        val max = state.max.trim().toDoubleOrNull()
+        val min = state.min.text.trim().toDoubleOrNull()
+        val max = state.max.text.trim().toDoubleOrNull()
         val errors = mutableMapOf<ErrorTarget, Boolean>()
         if (min == null && max == null) {
             errors[ErrorTarget.MIN_MAX] = true
         }
-        val amount = state.amount.trim().toDoubleOrNull()
+        val amount = state.amount.text.trim().toDoubleOrNull()
         if (amount == null) {
             errors[ErrorTarget.AMOUNT] = true
         }

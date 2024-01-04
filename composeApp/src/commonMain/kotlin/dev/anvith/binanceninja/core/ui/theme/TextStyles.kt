@@ -211,6 +211,8 @@ object AppText {
         keyboardActions: KeyboardActions = KeyboardActions.Default,
         isError: Boolean = false,
         supportingText: @Composable (() -> Unit)? = null,
+        trailingIcon: @Composable (() -> Unit)? = null,
+        readOnly: Boolean = false,
     ) {
         val style = TextModifier.size(Dimens.textSmall)
             .lineHeight(Dimens.textXXLarge)
@@ -226,7 +228,9 @@ object AppText {
             textStyle = style,
             keyboardActions = keyboardActions,
             isError = isError,
-            supportingText = supportingText
+            supportingText = supportingText,
+            trailingIcon=trailingIcon,
+            readOnly = readOnly,
         )
     }
 

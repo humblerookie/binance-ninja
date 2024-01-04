@@ -23,6 +23,9 @@ class CreateFilterValidator {
             errors[ErrorTarget.MIN] = true
             errors[ErrorTarget.MAX] = true
         }
+        if (state.selectedCurrency == null) {
+            errors[ErrorTarget.CURRENCY] = true
+        }
         val amount = state.amount.text.trim().toDoubleOrNull()
         if (amount == null) {
             errors[ErrorTarget.AMOUNT] = true

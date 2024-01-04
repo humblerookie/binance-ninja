@@ -1,0 +1,26 @@
+import kotlin.Boolean;
+
+CREATE TABLE Currency (
+    code TEXT  PRIMARY KEY NOT NULL,
+    symbol TEXT NOT NULL,
+    icon TEXT,
+    country TEXT,
+    isFiat INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+getAllCurrencies:
+SELECT * FROM Currency ORDER BY code ASC;
+
+addCurrency:
+INSERT OR REPLACE INTO Currency (code,symbol,icon,country) VALUES ?;
+
+getFiatCurrencies:
+SELECT * FROM Currency WHERE isFiat = 1 ORDER BY code ASC;
+
+getCryptoCurrencies:
+SELECT * FROM Currency WHERE isFiat = 0 ORDER BY code ASC;
+
+removeAll:
+DELETE FROM Currency;
+
+

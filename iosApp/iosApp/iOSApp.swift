@@ -26,7 +26,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       uiViewControllerProvider: { UIApplication.topViewController()! }
     )
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        // perform what you want here
+        applicationComponent.initializers
+                    .compactMap { ($0 as! any Initializer) }
+                    .forEach { initializer in
+                        initializer.initialize()
+                    }
         return true
     }
 }

@@ -6,4 +6,4 @@ import platform.UIKit.UIViewController
 typealias MainViewController = () -> UIViewController
 
 @Inject
-fun MainViewController(app: App) = ComposeUIViewController { app() }
+fun MainViewController(app: App) = ComposeUIViewController { app.invoke() }

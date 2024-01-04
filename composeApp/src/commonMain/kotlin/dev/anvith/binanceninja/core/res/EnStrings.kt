@@ -25,7 +25,6 @@ val EnStrings = object : Strings {
     override val selectAmount = "Select the amount:"
     override val selectPrice = "Select the price:"
     override val miscRequirements = "Miscellaneous: "
-    override val commonError = "Something went wrong"
     override val miscOptions = listOf("Is Merchant", "Is Restricted")
     override val labelMerchant = "Merchant"
     override val labelRestricted = "Restricted"
@@ -56,13 +55,15 @@ val EnStrings = object : Strings {
         }
     override val labelRemove = "Remove"
 
+    override val errorCommon = "Something went wrong. Please try again."
+    override val errorNetwork =
+        "Network request failed. Please check your connection and try again."
+    override val selectCurrency = "Select a currency"
+    override val actionRetry = "Retry"
+    override val errorSync = "Failed to sync data. Please try again."
     override val errorMinMaxEmpty = "Provide either min or max"
-
     override val errorAmountEmpty = "Provide a quantity"
-
-    override val errorInvalidInput= "Invalid input"
-
+    override val errorInvalidInput = "Invalid input"
     override val errorNoFilters = "You currently have no filters added."
-
     override val filterCreationMessage = "Filter created successfully"
 }

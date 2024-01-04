@@ -32,12 +32,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.lyricist.strings
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.anvith.binanceninja.core.ui.components.Space
+import dev.anvith.binanceninja.core.ui.data.Constants.Assets
 import dev.anvith.binanceninja.core.ui.data.IList
 import dev.anvith.binanceninja.core.ui.presentation.PresenterTab
 import dev.anvith.binanceninja.core.ui.presentation.getPresenter
@@ -52,6 +55,8 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 object ViewFiltersScreen: PresenterTab() {
+
+    override val key = uniqueScreenKey
     override val options: TabOptions
         @Composable
         get() {
@@ -103,10 +108,11 @@ object ViewFiltersScreen: PresenterTab() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painterResource("empty-asset.xml"),
+                painterResource(Assets.EMPTY),
                 null,
                 contentScale = ContentScale.Inside,
-                modifier = Modifier.size(Dimens.iconNormal)
+                modifier = Modifier.size(Dimens.iconNormal),
+                colorFilter = ColorFilter.tint(ThemeColors.onSurface)
             )
             Space(height = Dimens.spaceXLarge)
             AppText.Body1(

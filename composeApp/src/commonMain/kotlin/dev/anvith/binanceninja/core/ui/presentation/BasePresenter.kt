@@ -4,9 +4,11 @@ import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.logE
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,11 +31,13 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
     private val mutex = Mutex()
     protected fun updateState(map: (S) -> S) = _state.update(map)
 
-    private val viewModelScope: CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatcherProvider.main())
+    private val presenterScope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + dispatcherProvider.main() + CoroutineExceptionHandler { _, exception ->
+            logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
+        })
 
     val state: StateFlow<S> = _state.stateIn(
-        viewModelScope,
+        presenterScope,
         SharingStarted.WhileSubscribed(5000),
         this.initState(),
     )
@@ -43,7 +47,7 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ) {
-        viewModelScope.launch(context, start, block)
+        presenterScope.launch(context, start, block)
     }
 
     val currentState: S
@@ -67,16 +71,21 @@ abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
 
     companion object {
         val presenters = mutableMapOf<String, BasePresenter<*, *>>()
-        inline fun <reified T> getPresenter(key: String): T {
-            return presenters[key] as T
+        inline fun <reified T> getPresenter(key: String, factory: () -> T): T {
+            return (presenters[key] ?: factory()) as T
         }
 
         inline fun removeBinding(key: String) {
-            presenters.remove(key)
+            presenters.remove(key)?.onCleared()
         }
     }
 
     fun bind(screen: PresenterScreen) {
         presenters[screen.key] = this
     }
+
+    fun onCleared() {
+        presenterScope.cancel()
+    }
+
 }

@@ -4,6 +4,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import cafe.adriel.lyricist.strings
 import dev.anvith.binanceninja.App
+import dev.anvith.binanceninja.core.Initializer
 import dev.anvith.binanceninja.di.AppComponent
 import dev.anvith.binanceninja.di.HomeComponent
 import dev.anvith.binanceninja.di.create
@@ -13,6 +14,7 @@ typealias HomeApplication = () -> Unit
 
 fun main() {
     val component = HomeComponent::class.create(AppComponent::class.create())
+    component.applicationComponent.initializers.forEach(Initializer::initialize)
     component.homeFactory()
 }
 

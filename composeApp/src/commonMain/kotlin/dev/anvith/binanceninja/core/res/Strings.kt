@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 
 interface Strings {
+
+
     val appName: String
     val actionBuy: String
     val actionSell: String
@@ -17,7 +19,7 @@ interface Strings {
     val selectPrice: String
     val selectAmount: String
     val miscRequirements: String
-    val commonError: String
+    val errorCommon: String
     val miscOptions: List<String>
     val labelMerchant: String
     val labelRestricted: String
@@ -29,4 +31,8 @@ interface Strings {
     val errorNoFilters: String
     val filterCreationMessage: String
     val errorInvalidInput: String
+    val errorSync: String
+    val errorNetwork: String
+    val selectCurrency: String
+    val actionRetry: String
 }

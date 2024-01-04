@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 sqldelight {
@@ -28,7 +29,6 @@ kotlin {
             }
         }
     }
-
     jvm("desktop")
 
     listOf(
@@ -51,22 +51,26 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            api(libs.compose.ui.tooling.core)
-            api(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.sqldelight.android.driver)
+
+                api(libs.compose.ui.tooling.core)
+                api(libs.compose.ui.tooling.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.sqldelight.android.driver)
+                implementation(libs.ktor.client.okhttp)
         }
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(libs.bundles.compose)
                 implementation(libs.bundles.voyager)
+                implementation(libs.bundles.ktor)
                 implementation(libs.inject.runtime)
                 api(libs.lyricist.core)
                 api(libs.kotlinx.coroutines)
                 implementation(libs.sqldelight.extensions.coroutines)
+                implementation(libs.kotlinx.serialization)
                 api(libs.napier)
-
+                implementation(libs.bundles.settings)
             }
 
         }
@@ -77,12 +81,14 @@ kotlin {
         }
         iosMain.dependencies{
             implementation(libs.sqldelight.native.driver)
+            implementation(libs.ktor.client.darwin)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.sqldelight.jvm.driver)
+            implementation(libs.ktor.client.okhttp)
         }
 
     }

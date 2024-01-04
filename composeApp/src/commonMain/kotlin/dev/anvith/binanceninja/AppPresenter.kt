@@ -4,6 +4,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.ui.data.IList
 import dev.anvith.binanceninja.core.ui.data.lock
+import dev.anvith.binanceninja.core.ui.presentation.BasePresenter
 import dev.anvith.binanceninja.data.cache.FilterRepository
 import dev.anvith.binanceninja.di.ActivityScope
 import dev.anvith.binanceninja.features.ui.CreateFilterPresenter
@@ -41,14 +42,18 @@ class AppPresenter(
         if (!::children.isInitialized) {
             children = listOf(
                 CreateFilterScreen.also {
-                    createFilterPresenterFactory(
-                        repository,
-                        createFilterValidator,
-                        dispatcherProvider
-                    ).bind(it)
+                    (BasePresenter.getPresenter(it.key) {
+                        createFilterPresenterFactory(
+                            repository,
+                            createFilterValidator,
+                            dispatcherProvider
+                        )
+                    }).bind(it)
                 },
                 ViewFiltersScreen.also {
-                    viewFiltersPresenterFactory(repository, dispatcherProvider).bind(it)
+                    BasePresenter.getPresenter(it.key) {
+                        viewFiltersPresenterFactory(repository, dispatcherProvider)
+                    }.bind(it)
                 }
             ).lock()
         }

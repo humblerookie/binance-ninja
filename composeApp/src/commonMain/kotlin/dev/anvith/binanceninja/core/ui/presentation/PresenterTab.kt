@@ -4,9 +4,12 @@ import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import cafe.adriel.voyager.core.lifecycle.ScreenLifecycleOwner
 import cafe.adriel.voyager.core.lifecycle.ScreenLifecycleProvider
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.tab.Tab
 
 abstract class PresenterTab : Tab, ScreenLifecycleProvider, PresenterScreen {
+
+    override val key = uniqueScreenKey
 
     private val lifecycleOwner = AppScreenLifecycleOwner()
     override fun getLifecycleOwner() = lifecycleOwner

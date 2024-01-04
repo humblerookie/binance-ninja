@@ -1,9 +1,12 @@
 package dev.anvith.binanceninja.features.ui
 
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
+import dev.anvith.binanceninja.core.ui.data.lock
 import dev.anvith.binanceninja.core.ui.presentation.BasePresenter
 import dev.anvith.binanceninja.core.ui.presentation.SideEffect.MiscEffect
+import dev.anvith.binanceninja.data.cache.CurrencyRepository
 import dev.anvith.binanceninja.data.cache.FilterRepository
+import dev.anvith.binanceninja.domain.mappers.ErrorHandler
 import dev.anvith.binanceninja.domain.models.FilterModel
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event
@@ -14,19 +17,51 @@ import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromMercha
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.IsRestricted
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MaxChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MinChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.Retry
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.SelectCurrency
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.State
 import dev.anvith.binanceninja.features.ui.validators.CreateFilterValidator
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class CreateFilterPresenter(
-    private val repository: FilterRepository,
+    private val filterRepository: FilterRepository,
+    private val currencyRepository: CurrencyRepository,
     private val validator: CreateFilterValidator,
+    private val errorHandler: ErrorHandler,
     dispatcherProvider: DispatcherProvider,
 ) : BasePresenter<State, Event>(dispatcherProvider) {
 
 
     override fun initState(): State = State()
+
+    init {
+        fetchCurrencies()
+    }
+
+    private fun fetchCurrencies() {
+        launch {
+            updateState { state ->
+                state.copy(isLoading = true, errorMessage = null)
+            }
+            currencyRepository.getAllFiatCurrencies(onSyncFailure = ::onFetchError).collect {
+                updateState { state ->
+                    state.copy(
+                        currencies = it.lock(),
+                        selectedCurrency = state.selectedCurrency
+                            ?: it.firstOrNull { it.code == currencyRepository.getUserCurrency() },
+                        isLoading = it.isEmpty()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onFetchError(throwable: Throwable) {
+        updateState {
+            it.copy(errorMessage = errorHandler.getMessage(throwable), isLoading = false)
+        }
+    }
 
     override fun onEvent(event: Event) {
         when (event) {
@@ -55,6 +90,15 @@ class CreateFilterPresenter(
             is IsRestricted -> updateState { state ->
                 state.copy(isRestricted = event.value)
             }
+
+            is SelectCurrency -> {
+                updateState { state ->
+                    state.copy(selectedCurrency = event.value)
+                }
+                currencyRepository.saveUserCurrency(event.value)
+            }
+
+            Retry -> fetchCurrencies()
         }
     }
 
@@ -67,16 +111,17 @@ class CreateFilterPresenter(
                 max = currentState.max.text.trim().toDoubleOrNull(),
                 fromMerchant = currentState.fromMerchant,
                 isRestricted = currentState.isRestricted,
-                amount = currentState.amount.text.toDouble()
+                amount = currentState.amount.text.toDouble(),
+                targetCurrency = currentState.selectedCurrency!!.code
             )
             launch {
-                repository.insertFilter(model)
+                filterRepository.insertFilter(model)
                 sideEffect(MiscEffect(Effect.FilterCreationSuccess))
             }
 
         }
         updateState { state ->
-            state.copy(errors = errors)
+            state.copy(validationErrors = errors)
         }
     }
 

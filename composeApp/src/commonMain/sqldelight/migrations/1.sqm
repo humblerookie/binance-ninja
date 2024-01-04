@@ -1,0 +1,9 @@
+import kotlin.Boolean;
+
+CREATE TABLE Currency (
+    code TEXT  PRIMARY KEY NOT NULL,
+    symbol TEXT NOT NULL,
+    icon TEXT,
+    country TEXT,
+    isFiat INTEGER AS Boolean NOT NULL DEFAULT 0
+);

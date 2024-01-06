@@ -21,3 +21,9 @@ You can set filters, and It’ll alert you when any order satisfies matches the 
 
 Learn more
 about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
+
+
+### Tasks
+- Request Notification Permission
+- Handle notifications/scheduling on desktop
+- Ensure repeated notifications are not sent

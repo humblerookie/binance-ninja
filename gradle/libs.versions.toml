@@ -27,6 +27,8 @@ napier = "2.6.1"
 ktor = "2.3.7"
 multiplatformSettings = "1.1.1"
 serialization="1.6.2"
+work ="2.9.0"
+notify="4.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -73,6 +75,9 @@ kotlinx-serialization={ module = "org.jetbrains.kotlinx:kotlinx-serialization-js
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-noarg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 napier= { module = "io.github.aakira:napier", version.ref = "napier" }
+workmanager-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
+workmanager-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+notify-desktop = { module = "com.dorkbox:Notify", version.ref = "notify" }
 
 
 [plugins]
@@ -90,3 +95,4 @@ compose = [ "compose-runtime", "compose-foundation", "compose-ui",  "compose-mat
 ktor= ["ktor-client-core","ktor-content-negotiation","ktor-client-logging","ktor-client-json"]
 voyager = ["voyager-navigator", "voyager-transitions","voyager-tab-navigator"]
 settings = ["multiplatform-settings","multiplatform-settings-noarg"]
+workmanager = ["workmanager-runtime","workmanager-runtime-ktx"]

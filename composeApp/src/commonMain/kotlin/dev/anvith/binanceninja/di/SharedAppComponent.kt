@@ -7,7 +7,7 @@ import dev.anvith.binanceninja.data.remote.ApiComponent
 import me.tatarka.inject.annotations.Provides
 
 
-abstract class SharedAppComponent : DataStoreComponent, ApiComponent, LoggingComponent {
+abstract class SharedAppComponent : DataStoreComponent, ApiComponent, LoggingComponent,SchedulerComponent {
 
     @Provides
     @AppScope

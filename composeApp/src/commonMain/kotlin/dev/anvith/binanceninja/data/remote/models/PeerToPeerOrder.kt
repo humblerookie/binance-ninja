@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PeerToPeerOrder(
     @SerialName( "adv")
-    val adv: AdvertiserDetails?,
+    val ad: AdDetails?,
     @SerialName( "advertiser")
     val advertiser: AdvertiserInfo?
 )

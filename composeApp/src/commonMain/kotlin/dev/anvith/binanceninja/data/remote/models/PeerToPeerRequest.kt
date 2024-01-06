@@ -6,24 +6,32 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PeerToPeerRequest(
+    @SerialName("asset")
     val asset: String,
+    @SerialName("countries")
     val countries: List<String> = emptyList(),
+    @SerialName("fiat")
     val fiat: String,
+    @SerialName("page")
     val page: Int = 1,
+    @SerialName("payTypes")
     val payTypes: List<String> = emptyList(),
+    @SerialName("proMerchantAds")
     val proMerchantAds: Boolean,
-    val publisherType: Publisher,
+    @SerialName("publisherType")
+    val publisherType: Publisher?,
+    @SerialName("rows")
     val rows: Int = MAX_ROWS,
-    val tradeType: TradeType
+    @SerialName("tradeType")
+    val tradeType: TradeType,
+    @SerialName("transAmount")
+    val amount: Double? = null,
 )
 
 @Serializable
 enum class Publisher {
     @SerialName("merchant")
     Merchant,
-
-    @SerialName("any")
-    Any
 }
 
 @Serializable

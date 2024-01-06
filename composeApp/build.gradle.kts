@@ -51,15 +51,23 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-
                 api(libs.compose.ui.tooling.core)
                 api(libs.compose.ui.tooling.preview)
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.ktor.client.okhttp)
+                implementation(libs.bundles.workmanager)
         }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.sqldelight.jvm.driver)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.notify.desktop)
+        }
+        
         commonMain {
-            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(libs.bundles.compose)
                 implementation(libs.bundles.voyager)
@@ -72,7 +80,7 @@ kotlin {
                 api(libs.napier)
                 implementation(libs.bundles.settings)
             }
-
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
         }
 
         commonTest.dependencies {
@@ -84,12 +92,7 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
 
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.sqldelight.jvm.driver)
-            implementation(libs.ktor.client.okhttp)
-        }
+
 
     }
 

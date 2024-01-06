@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Binance Ninja</string>
+    <string name="match_notification_title">Match Notifications</string>
+    <string name="match_notification_description">All order notifications that match your filter.</string>
 </resources>

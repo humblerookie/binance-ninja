@@ -4,12 +4,17 @@ import dev.anvith.binanceninja.core.concurrency.DefaultDispatcherProvider
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.data.cache.DataStoreComponent
 import dev.anvith.binanceninja.data.remote.ApiComponent
+import dev.anvith.binanceninja.domain.PeriodicScheduler
+import dev.anvith.binanceninja.domain.RequestExecutor
 import me.tatarka.inject.annotations.Provides
 
 
-abstract class SharedAppComponent : DataStoreComponent, ApiComponent, LoggingComponent {
+abstract class SharedAppComponent : DataStoreComponent, ApiComponent, LoggingComponent,
+    SchedulerComponent, MiscComponent {
+
+
 
     @Provides
     @AppScope
-    fun DefaultDispatcherProvider.bind(): DispatcherProvider = this
+    fun PeriodicScheduler.requestExecutor(): RequestExecutor = this
 }

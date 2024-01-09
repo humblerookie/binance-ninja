@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AdvertiserDetails(
+data class AdDetails(
     @SerialName( "advNo")
     val advNo: String?,
     @SerialName( "asset")

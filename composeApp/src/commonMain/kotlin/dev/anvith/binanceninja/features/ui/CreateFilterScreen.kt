@@ -73,6 +73,7 @@ import dev.anvith.binanceninja.core.ui.theme.ThemeColors
 import dev.anvith.binanceninja.core.ui.theme.alpha12
 import dev.anvith.binanceninja.domain.models.CurrencyModel
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect.FilterCreationSuccess
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect.NotificationPermissionDenied
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.AMOUNT
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.CURRENCY
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.MAX
@@ -189,9 +190,15 @@ object CreateFilterScreen : PresenterTab() {
         val state by stateFlow.collectAsState()
         val snackbarProvider = LocalSnackbarProvider.current
         val filterSuccess = strings.filterCreationMessage
+        val permissionDeniedNotifications = strings.permissionDeniedNotifications
         LaunchedEffect(Unit) {
             events.collect { sideEffect ->
-                onSideEffect(sideEffect, snackbarProvider, filterSuccess)
+                onSideEffect(
+                    sideEffect,
+                    snackbarProvider,
+                    filterSuccess,
+                    permissionDeniedNotifications
+                )
             }
         }
 
@@ -217,13 +224,22 @@ object CreateFilterScreen : PresenterTab() {
     private fun onSideEffect(
         sideEffect: SideEffect,
         snackbarProvider: SnackbarProvider,
-        filterSuccess: String
+        filterSuccess: String,
+        permissionDeniedNotifications: String,
     ) {
         when (sideEffect) {
             is MiscEffect<*> -> when (sideEffect.data) {
                 FilterCreationSuccess -> {
                     snackbarProvider.showSnack(
                         filterSuccess,
+                        null,
+                        true
+                    ) { _ -> }
+                }
+
+                NotificationPermissionDenied -> {
+                    snackbarProvider.showSnack(
+                        permissionDeniedNotifications,
                         null,
                         true
                     ) { _ -> }
@@ -268,6 +284,7 @@ object CreateFilterScreen : PresenterTab() {
             )
             Space(height = Dimens.spaceLarge)
             AmountFilter(
+                symbol = state.selectedCurrency?.symbol,
                 amount = state.amount,
                 hasError = state.validationErrors[AMOUNT] ?: false,
                 onChanged = onAmountChanged,
@@ -435,13 +452,14 @@ object CreateFilterScreen : PresenterTab() {
 
     @Composable
     private fun AmountFilter(
+        symbol: String?,
         amount: TextFieldValue,
         hasError: Boolean,
         onChanged: (TextFieldValue) -> Unit,
         onCreateFilter: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        AppText.H5(text = strings.selectAmount)
+        AppText.H5(text = strings.selectAmount(symbol))
         Row {
             Card(
                 modifier = modifier.weight(1f).padding(vertical = Dimens.keyline)

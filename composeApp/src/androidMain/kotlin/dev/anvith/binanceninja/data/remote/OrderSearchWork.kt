@@ -12,7 +12,7 @@ class OrderSearchWork(
 ) : CoroutineWorker(appContext, params) {
 
     private val periodicScheduler
-        get() = (applicationContext as BinanceApplication).appComponent.scheduler
+        get() = (applicationContext as BinanceApplication).appComponent.requestExecutor
 
     override suspend fun doWork(): Result {
         if (runAttemptCount > Constants.RETRIES) {

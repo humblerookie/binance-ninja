@@ -17,7 +17,7 @@ interface Strings {
     val labelGreaterThan: String
     val labelLessThan: String
     val selectPrice: String
-    val selectAmount: String
+    val selectAmount: (currency:String?) -> String
     val miscRequirements: String
     val errorCommon: String
     val miscOptions: List<String>
@@ -35,4 +35,5 @@ interface Strings {
     val errorNetwork: String
     val selectCurrency: String
     val actionRetry: String
+    val permissionDeniedNotifications: String
 }

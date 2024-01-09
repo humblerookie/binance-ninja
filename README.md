@@ -23,7 +23,7 @@ Learn more
 about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
 
 
-### Tasks
+### Upcoming Tasks
 - Request Notification Permission
 - Handle notifications/scheduling on desktop
-- Ensure repeated notifications are not sent
+- Ensure repeated order notifications are not sent

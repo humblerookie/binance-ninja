@@ -19,7 +19,6 @@ import me.tatarka.inject.annotations.Inject
 @AppScope
 actual class PlatformScheduler(
     dispatcherProvider: DispatcherProvider,
-    private val periodicScheduler: PeriodicScheduler,
 ) {
 
 
@@ -27,29 +26,33 @@ actual class PlatformScheduler(
         CoroutineScope(SupervisorJob() + dispatcherProvider.io() + CoroutineExceptionHandler { _, exception ->
             logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
         })
-    private var executor: ScheduledExecutorService? = null
+    private var scheduledExecutorService: ScheduledExecutorService? = null
     private var future: ScheduledFuture<*>? = null
-    actual fun schedule() {
-        executor = Executors.newScheduledThreadPool(Constants.PARALLELISM)
+    actual fun schedule(executor: RequestExecutor) {
+        scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
         val task = Runnable {
             scope.launch {
                 var count = 0
                 var success = false
                 while (count <= Constants.RETRIES && !success) {
-                    success = periodicScheduler.executeRequests()
+                    success = executor.executeRequests()
                     count++
                 }
             }
         }
 
-        future =
-            executor!!.scheduleAtFixedRate(task, 0, Constants.INTERVAL_MINUTES, TimeUnit.MINUTES)
+        future = scheduledExecutorService!!.scheduleAtFixedRate(
+            task,
+            0,
+            Constants.INTERVAL_MINUTES,
+            TimeUnit.MINUTES
+        )
 
     }
 
     actual fun cancel() {
         future?.cancel(true)
-        executor?.shutdown()
+        scheduledExecutorService?.shutdown()
     }
 
 }

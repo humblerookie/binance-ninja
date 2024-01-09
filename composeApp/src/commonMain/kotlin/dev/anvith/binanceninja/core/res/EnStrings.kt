@@ -22,7 +22,8 @@ val EnStrings = object : Strings {
     override val actionCreateFilter = "Create Filter"
     override val labelGreaterThan = "Greater Than (>=)"
     override val labelLessThan = "Less Than (<=)"
-    override val selectAmount = "Select the amount:"
+    override val selectAmount =
+        { currency: String? -> "Select the amount ${currency?.let { "(in $it)" } ?: ""}:" }
     override val selectPrice = "Select the price:"
     override val miscRequirements = "Miscellaneous: "
     override val miscOptions = listOf("Is Merchant", "Is Restricted")
@@ -66,4 +67,6 @@ val EnStrings = object : Strings {
     override val errorInvalidInput = "Invalid input"
     override val errorNoFilters = "You currently have no filters added."
     override val filterCreationMessage = "Filter created successfully"
+    override val permissionDeniedNotifications =
+        "Notification permission was denied, You may not receive order match notifications. Please enable them from app settings."
 }

@@ -2,6 +2,7 @@ package dev.anvith.binanceninja.domain
 
 import dev.anvith.binanceninja.core.Initializer
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
+import dev.anvith.binanceninja.core.logD
 import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.core.ui.data.Constants.PARALLELISM
 import dev.anvith.binanceninja.data.NotificationService
@@ -28,7 +29,7 @@ class PeriodicScheduler(
     private val notificationService: NotificationService,
     private val platformScheduler: PlatformScheduler,
     private val mapper: FilterMapper,
-) : Initializer {
+) : Initializer, RequestExecutor {
 
     private var filters: List<FilterModel> = emptyList()
     private val scope: CoroutineScope =
@@ -40,8 +41,9 @@ class PeriodicScheduler(
         scope.launch {
             filterRepository.getFilters().collectLatest {
                 filters = it
+                logD("Filters were updated")
                 if (filters.isNotEmpty()) {
-                    platformScheduler.schedule()
+                    platformScheduler.schedule(this@PeriodicScheduler)
                 } else {
                     platformScheduler.cancel()
                 }
@@ -49,8 +51,9 @@ class PeriodicScheduler(
         }
     }
 
-    suspend fun executeRequests(): Boolean {
+    override suspend fun executeRequests(): Boolean {
         if (filters.isNotEmpty()) {
+            logD("Executing Filter requests")
             val requestScope = CoroutineScope(dispatcherProvider.io() + SupervisorJob())
             val downloadJobs = mutableListOf<Pair<FilterModel, Deferred<Result<Orders>>>>()
             val completedJobs = mutableListOf<Pair<FilterModel, Result<Orders>>>()
@@ -90,4 +93,8 @@ class PeriodicScheduler(
         }
         downloadJobs.clear()
     }
+}
+
+interface RequestExecutor {
+    suspend fun executeRequests(): Boolean
 }

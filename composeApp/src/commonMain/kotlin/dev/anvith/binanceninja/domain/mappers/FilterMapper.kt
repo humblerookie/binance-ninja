@@ -54,7 +54,7 @@ class FilterMapper {
 
     fun toNotification(item: FilterModel, count: Int): NotificationModel {
         return NotificationModel(
-            title = "$count Order(s) Matched",
+            title = "$count Order${if(count>1)"s" else ""} Matched",
             message = "Filter: Range ${item.targetCurrency}${
                 item.min?.let {
                     formatPrecision(

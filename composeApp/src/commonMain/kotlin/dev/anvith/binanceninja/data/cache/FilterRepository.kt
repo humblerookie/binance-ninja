@@ -44,7 +44,12 @@ class FilterRepository(
         when (val response = peerApi.getOrders(filterMapper.toApiRequest(filter))) {
             is Success -> {
                 val orders = response.data.data.map { orderMapper.toDomain(it) }
-                val range = (filter.min ?: 0.0)..(filter.max ?: Double.MAX_VALUE)
+                val range = when{
+                    filter.min != null && filter.max != null -> filter.min..filter.max
+                    filter.min != null -> 0.0..filter.min
+                    else -> filter.max!!..Double.MAX_VALUE
+
+                }
                 Result.success(orders.filter { it.price in range })
             }
             else -> {

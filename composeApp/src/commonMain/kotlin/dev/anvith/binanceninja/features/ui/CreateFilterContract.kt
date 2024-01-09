@@ -38,6 +38,7 @@ interface CreateFilterContract {
 
     sealed class Effect {
         data object FilterCreationSuccess : Effect()
+        data object NotificationPermissionDenied : Effect()
     }
 
     enum class ErrorTarget {

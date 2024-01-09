@@ -29,6 +29,8 @@ multiplatformSettings = "1.1.1"
 serialization="1.6.2"
 work ="2.9.0"
 notify="4.5"
+ktlint="12.0.3"
+accompanist ="0.32.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -78,7 +80,7 @@ napier= { module = "io.github.aakira:napier", version.ref = "napier" }
 workmanager-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
 workmanager-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 notify-desktop = { module = "com.dorkbox:Notify", version.ref = "notify" }
-
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -89,6 +91,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-version" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktlint= { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
 [bundles]
 compose = [ "compose-runtime", "compose-foundation", "compose-ui",  "compose-material3", "compose-resources"]

@@ -1,42 +1,42 @@
 package dev.anvith.binanceninja.data
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import dev.anvith.binanceninja.MainActivity
 import dev.anvith.binanceninja.R
 import dev.anvith.binanceninja.data.cache.UserDataStore
 import dev.anvith.binanceninja.domain.models.NotificationModel
+import dev.anvith.binanceninja.features.ui.core.PermissionHandler
+import dev.anvith.binanceninja.features.ui.core.PermissionType
 import java.util.UUID
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 actual class NotificationService(
     private val context: Context,
-    private val userDataStore: UserDataStore
+    private val userDataStore: UserDataStore,
+    private val permissionHandler: PermissionHandler
 ) {
     private val channelId = "MATCH_ORDERS"
+    @SuppressLint("MissingPermission")
     actual fun notify(items: List<NotificationModel>) {
         with(NotificationManagerCompat.from(context)) {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                createNotificationChannel()
-                createNotification(items).forEach {
-                    val id = userDataStore.notificationId + 1
-                    userDataStore.notificationId = id
-                    notify(id, it)
+            permissionHandler.hasPermission(PermissionType.NOTIFICATION) { hasPermission ->
+                if (hasPermission) {
+                    createNotificationChannel()
+                    createNotification(items).forEach {
+                        val id = userDataStore.notificationId + 1
+                        userDataStore.notificationId = id
+                        notify(id, it)
+                    }
                 }
             }
         }

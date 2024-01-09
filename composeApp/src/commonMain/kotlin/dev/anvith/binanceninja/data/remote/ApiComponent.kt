@@ -40,6 +40,7 @@ internal interface ApiComponent : PlatformHttpComponent {
             isLenient = true
             ignoreUnknownKeys = true
             prettyPrint = true
+            encodeDefaults= true
         }
     }
 

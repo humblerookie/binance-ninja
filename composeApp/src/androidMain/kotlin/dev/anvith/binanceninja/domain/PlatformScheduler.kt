@@ -19,7 +19,8 @@ actual class PlatformScheduler(private val context: Context) {
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
-    actual fun schedule() {
+    actual fun schedule(executor:RequestExecutor) {
+        // Ignore Parameter on android since we rely on inject
         workRequest = PeriodicWorkRequest.Builder(
             OrderSearchWork::class.java,
             INTERVAL_MINUTES,

@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import dev.anvith.binanceninja.BinanceApplication
 import dev.anvith.binanceninja.core.ui.data.Constants
 
-class OrderSearchWork(
+class RefreshOrdersTask(
     appContext: Context,
     params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {

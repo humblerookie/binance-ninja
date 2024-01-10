@@ -3,10 +3,10 @@ import kotlin.Boolean;
 CREATE TABLE Filter (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     isBuy INTEGER AS Boolean NOT NULL DEFAULT 0,
-    min REAL DEFAULT 0,
-    max REAL DEFAULT 0,
+    min REAL,
+    max REAL,
     fromMerchant INTEGER AS Boolean NOT NULL DEFAULT 0,
-    isRestricted INTEGER AS Boolean NOT NULL DEFAULT 0,
+    isProMerchant INTEGER AS Boolean NOT NULL DEFAULT 0,
     amount REAL DEFAULT 0 NOT NULL,
     sourceCurrency TEXT NOT NULL DEFAULT 'INR',
     targetCurrency TEXT NOT NULL DEFAULT 'USDT'
@@ -19,7 +19,7 @@ getFiltersByCurrency:
 SELECT * FROM Filter WHERE sourceCurrency = ?;
 
 addFilter:
-INSERT INTO Filter (isBuy, min, max, fromMerchant, isRestricted, amount, sourceCurrency,targetCurrency) VALUES ?;
+INSERT INTO Filter (isBuy, min, max, fromMerchant, isProMerchant, amount, sourceCurrency,targetCurrency) VALUES ?;
 
 removeFilter:
 DELETE FROM Filter WHERE id = ?;

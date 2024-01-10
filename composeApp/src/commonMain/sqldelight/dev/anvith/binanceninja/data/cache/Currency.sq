@@ -12,7 +12,7 @@ getAllCurrencies:
 SELECT * FROM Currency ORDER BY code ASC;
 
 addCurrency:
-INSERT OR REPLACE INTO Currency (code,symbol,icon,country) VALUES ?;
+INSERT OR REPLACE INTO Currency (code,symbol,icon,country,isFiat) VALUES ?;
 
 getFiatCurrencies:
 SELECT * FROM Currency WHERE isFiat = 1 ORDER BY code ASC;

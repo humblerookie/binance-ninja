@@ -30,7 +30,7 @@ class CurrencyRepository(
         userDataStore.userCurrency = currency.code
     }
 
-    fun getUserCurrency() =  userDataStore.userCurrency
+    fun getUserCurrency() = userDataStore.userCurrency
     suspend fun getAllFiatCurrencies(
         forceRefresh: Boolean = false,
         onSyncFailure: (Throwable) -> Unit
@@ -47,7 +47,7 @@ class CurrencyRepository(
                         try {
                             insertCurrencies(isFiat = true, filter = it.data)
                         } catch (e: Exception) {
-                            logE(e.toString(),e)
+                            logE(e.toString(), e)
                             onSyncFailure(e)
                         }
                     }.whenError {
@@ -76,6 +76,10 @@ class CurrencyRepository(
     suspend fun getFiatCurrencies() = withContext(dispatcherProvider.io()) {
         queries.getFiatCurrencies().asFlow().map { it.executeAsList() }
             .map { it.map(mapper::toDomain) }
+    }
+
+    suspend fun getFiatCurrenciesOrEmpty() = withContext(dispatcherProvider.io()) {
+        queries.getAllCurrencies().executeAsList().map(mapper::toDomain)
     }
 
     suspend fun getCryptoCurrencies() = withContext(dispatcherProvider.io()) {

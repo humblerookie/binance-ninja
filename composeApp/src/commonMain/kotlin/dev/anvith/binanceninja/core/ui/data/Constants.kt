@@ -9,6 +9,7 @@ object Constants {
     const val RETRIES = 5
     const val PARALLELISM = 2
     const val INTERVAL_MINUTES = 15L
+    const val INTERVAL_DAYS = 1L
 
     object Assets {
 

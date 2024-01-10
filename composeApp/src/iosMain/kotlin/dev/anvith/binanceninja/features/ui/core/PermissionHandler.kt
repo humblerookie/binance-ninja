@@ -1,6 +1,7 @@
 package dev.anvith.binanceninja.features.ui.core
 
-import dev.anvith.binanceninja.core.logD
+import dev.anvith.binanceninja.core.extensions.toException
+import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.di.AppScope
 import me.tatarka.inject.annotations.Inject
 import platform.UserNotifications.UNAuthorizationOptionAlert
@@ -21,14 +22,16 @@ actual class PermissionHandler {
     ) {
         when (permission) {
             PermissionType.NOTIFICATION -> {
-                logD("requesting notification permission")
                 UNUserNotificationCenter.currentNotificationCenter()
                     .requestAuthorizationWithOptions(
                         UNAuthorizationOptionAlert
                                 or UNAuthorizationOptionSound
                                 or UNAuthorizationOptionBadge
                     ) { isAuthorized, error ->
-                        logD("isAuthorized $isAuthorized error $error")
+                        if (error != null) logE(
+                            "Error requesting notification permission",
+                            error.toException(),
+                        )
                         if (isAuthorized) onGranted() else onDenied()
                     }
             }

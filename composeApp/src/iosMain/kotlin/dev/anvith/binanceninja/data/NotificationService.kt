@@ -1,6 +1,6 @@
 package dev.anvith.binanceninja.data
 
-import dev.anvith.binanceninja.core.logD
+import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.data.cache.UserDataStore
 import dev.anvith.binanceninja.di.AppScope
 import dev.anvith.binanceninja.domain.models.NotificationModel
@@ -43,7 +43,7 @@ actual class NotificationService(
                     val center = UNUserNotificationCenter.currentNotificationCenter()
 
                     center.addNotificationRequest(request) { error ->
-                        logD("IOS Notification Error: $error")
+                        logE("IOS Notification Error: $error")
                     }
                 }
             }

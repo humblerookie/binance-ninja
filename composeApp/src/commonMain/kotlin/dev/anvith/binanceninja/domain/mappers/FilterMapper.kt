@@ -6,6 +6,7 @@ import dev.anvith.binanceninja.data.remote.models.PeerToPeerRequest
 import dev.anvith.binanceninja.data.remote.models.Publisher.Merchant
 import dev.anvith.binanceninja.data.remote.models.TradeType.Buy
 import dev.anvith.binanceninja.data.remote.models.TradeType.Sell
+import dev.anvith.binanceninja.domain.models.CurrencyModel
 import dev.anvith.binanceninja.domain.models.FilterModel
 import dev.anvith.binanceninja.domain.models.NotificationModel
 import me.tatarka.inject.annotations.Inject
@@ -17,10 +18,9 @@ class FilterMapper {
         return FilterModel(
             id = item.id,
             isBuy = item.isBuy,
-            min = item.min,
-            max = item.max,
+            price = (if (item.isBuy) item.max else item.min)!!,
             fromMerchant = item.fromMerchant,
-            isRestricted = item.isRestricted,
+            isProMerchant = item.isProMerchant,
             amount = item.amount,
             sourceCurrency = item.sourceCurrency,
             targetCurrency = item.targetCurrency
@@ -31,41 +31,44 @@ class FilterMapper {
         return Filter(
             id = item.id,
             isBuy = item.isBuy,
-            min = item.min,
-            max = item.max,
+            min = if (!item.isBuy) item.price else null,
+            max = if (item.isBuy) item.price else null,
             fromMerchant = item.fromMerchant,
-            isRestricted = item.isRestricted,
+            isProMerchant = item.isProMerchant,
             amount = item.amount,
             sourceCurrency = item.sourceCurrency,
             targetCurrency = item.targetCurrency
         )
     }
 
-    fun toApiRequest(item: FilterModel): PeerToPeerRequest{
-        return  PeerToPeerRequest(
+    fun toApiRequest(item: FilterModel): PeerToPeerRequest {
+        return PeerToPeerRequest(
             asset = item.sourceCurrency,
-            tradeType = if(item.isBuy) Buy else Sell,
+            tradeType = if (item.isBuy) Buy else Sell,
             fiat = item.targetCurrency,
             publisherType = if (item.fromMerchant) Merchant else null,
             amount = item.amount,
-            proMerchantAds = item.isRestricted
+            proMerchantAds = item.isProMerchant
         )
     }
 
-    fun toNotification(item: FilterModel, count: Int): NotificationModel {
+    fun toNotification(item: FilterModel, count: Int, currencies: Map<String, CurrencyModel>): NotificationModel {
+        println(currencies)
+        println(item)
         return NotificationModel(
-            title = "$count Order${if(count>1)"s" else ""} Matched",
-            message = "Filter: Range ${item.targetCurrency}${
-                item.min?.let {
+            title = "$count Order${if (count > 1) "s" else ""} Matched",
+            message = item.run {
+                val symbol =currencies[targetCurrency]?.symbol?:targetCurrency
+                "${if (isBuy) "Buying" else "Selling"} $symbol${
                     formatPrecision(
-                        it
+                        item.amount
                     )
-                } ?: '-'
-            }-${item.targetCurrency}${item.max?.let { formatPrecision(it) } ?: '-'}, for quantity ${
-                formatPrecision(
-                    item.amount
-                )
-            }"
+                } at a price of $symbol${
+                    formatPrecision(
+                        item.price
+                    )
+                }"
+            }
         )
     }
 }

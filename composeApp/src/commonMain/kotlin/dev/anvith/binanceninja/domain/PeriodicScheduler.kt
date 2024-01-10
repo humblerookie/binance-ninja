@@ -2,10 +2,10 @@ package dev.anvith.binanceninja.domain
 
 import dev.anvith.binanceninja.core.Initializer
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
-import dev.anvith.binanceninja.core.logD
 import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.core.ui.data.Constants.PARALLELISM
 import dev.anvith.binanceninja.data.NotificationService
+import dev.anvith.binanceninja.data.cache.CurrencyRepository
 import dev.anvith.binanceninja.data.cache.FilterRepository
 import dev.anvith.binanceninja.di.AppScope
 import dev.anvith.binanceninja.domain.mappers.FilterMapper
@@ -28,6 +28,7 @@ class PeriodicScheduler(
     private val filterRepository: FilterRepository,
     private val notificationService: NotificationService,
     private val platformScheduler: PlatformScheduler,
+    private val currencyRepository: CurrencyRepository,
     private val mapper: FilterMapper,
 ) : Initializer, RequestExecutor {
 
@@ -41,7 +42,6 @@ class PeriodicScheduler(
         scope.launch {
             filterRepository.getFilters().collectLatest {
                 filters = it
-                logD("Filters were updated")
                 if (filters.isNotEmpty()) {
                     platformScheduler.schedule(this@PeriodicScheduler)
                 } else {
@@ -53,10 +53,10 @@ class PeriodicScheduler(
 
     override suspend fun executeRequests(): Boolean {
         if (filters.isNotEmpty()) {
-            logD("Executing Filter requests")
             val requestScope = CoroutineScope(dispatcherProvider.io() + SupervisorJob())
             val downloadJobs = mutableListOf<Pair<FilterModel, Deferred<Result<Orders>>>>()
             val completedJobs = mutableListOf<Pair<FilterModel, Result<Orders>>>()
+            val currencies = currencyRepository.getFiatCurrenciesOrEmpty().associateBy { it.code }
             filters.forEach { first ->
                 val res = requestScope.async {
                     filterRepository.getOrders(first)
@@ -68,13 +68,14 @@ class PeriodicScheduler(
             }
             executeJobs(downloadJobs, completedJobs)
             requestScope.cancel()
-            val matchedOrders = completedJobs.filter { it.second.isSuccess }
+            val matchedOrders = completedJobs.filter {(_,res)-> res.isSuccess  && res.getOrThrow().isNotEmpty()}
             if (matchedOrders.isNotEmpty()) {
                 notificationService.notify(matchedOrders.map { it.first to it.second.getOrThrow().size }
                     .map {
                         mapper.toNotification(
                             it.first,
-                            it.second
+                            it.second,
+                            currencies
                         )
                     })
             }

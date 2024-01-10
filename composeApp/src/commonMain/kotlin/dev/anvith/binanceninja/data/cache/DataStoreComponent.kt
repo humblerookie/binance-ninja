@@ -20,4 +20,7 @@ internal interface DataStoreComponent : PlatformDbComponent {
 
     @Provides
     fun currencyQueries(db: NinjaDatabase): CurrencyQueries = db.currencyQueries
+
+    @Provides
+    fun orderQueries(db: NinjaDatabase): OrdersQueries = db.ordersQueries
 }

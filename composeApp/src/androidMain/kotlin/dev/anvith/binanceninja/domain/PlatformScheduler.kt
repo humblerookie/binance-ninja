@@ -5,8 +5,10 @@ import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import dev.anvith.binanceninja.core.ui.data.Constants.INTERVAL_DAYS
 import dev.anvith.binanceninja.core.ui.data.Constants.INTERVAL_MINUTES
-import dev.anvith.binanceninja.data.remote.OrderSearchWork
+import dev.anvith.binanceninja.data.cache.ResetOrdersTask
+import dev.anvith.binanceninja.data.remote.RefreshOrdersTask
 import dev.anvith.binanceninja.di.AppScope
 import java.util.concurrent.TimeUnit
 import me.tatarka.inject.annotations.Inject
@@ -14,26 +16,40 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 actual class PlatformScheduler(private val context: Context) {
-    private lateinit var workRequest: PeriodicWorkRequest
+    private lateinit var filterOrdersRequest: PeriodicWorkRequest
+    private lateinit var resetOrdersRequest: PeriodicWorkRequest
     private val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
-    actual fun schedule(executor:RequestExecutor) {
+    actual fun schedule(executor: RequestExecutor) {
         // Ignore Parameter on android since we rely on inject
-        workRequest = PeriodicWorkRequest.Builder(
-            OrderSearchWork::class.java,
-            INTERVAL_MINUTES,
-            TimeUnit.MINUTES,
-        ).setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(context).enqueue(workRequest)
+        with(WorkManager.getInstance(context)) {
+            filterOrdersRequest = PeriodicWorkRequest.Builder(
+                RefreshOrdersTask::class.java,
+                INTERVAL_MINUTES,
+                TimeUnit.MINUTES,
+            ).setConstraints(constraints)
+                .build()
+            enqueue(filterOrdersRequest)
+
+            resetOrdersRequest = PeriodicWorkRequest.Builder(
+                ResetOrdersTask::class.java,
+                INTERVAL_DAYS,
+                TimeUnit.DAYS,
+            ).build()
+            enqueue(resetOrdersRequest)
+
+        }
 
     }
 
     actual fun cancel() {
-        if (::workRequest.isInitialized) {
-            WorkManager.getInstance(context).cancelWorkById(workRequest.id)
+        if (::filterOrdersRequest.isInitialized) {
+            with(WorkManager.getInstance(context)){
+                cancelWorkById(filterOrdersRequest.id)
+                cancelWorkById(resetOrdersRequest.id)
+            }
         }
     }
 

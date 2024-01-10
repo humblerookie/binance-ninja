@@ -1,7 +1,6 @@
 package dev.anvith.binanceninja.features.ui
 
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
-import dev.anvith.binanceninja.core.logD
 import dev.anvith.binanceninja.core.ui.data.lock
 import dev.anvith.binanceninja.core.ui.presentation.BasePresenter
 import dev.anvith.binanceninja.core.ui.presentation.SideEffect.MiscEffect
@@ -16,9 +15,8 @@ import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.ActionType
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.AmountChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.CreateFilter
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromMerchant
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.IsRestricted
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MaxChanged
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MinChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromVerifiedMerchant
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.PriceChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.Retry
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.SelectCurrency
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.State
@@ -72,12 +70,8 @@ class CreateFilterPresenter(
         when (event) {
             is CreateFilter -> createFilter()
 
-            is MinChanged -> updateState { state ->
-                state.copy(min = event.value)
-            }
-
-            is MaxChanged -> updateState { state ->
-                state.copy(max = event.value)
+            is PriceChanged -> updateState { state ->
+                state.copy(price = event.value)
             }
 
             is AmountChanged -> updateState { state ->
@@ -92,7 +86,7 @@ class CreateFilterPresenter(
                 state.copy(fromMerchant = event.value)
             }
 
-            is IsRestricted -> updateState { state ->
+            is FromVerifiedMerchant -> updateState { state ->
                 state.copy(isRestricted = event.value)
             }
 
@@ -109,16 +103,12 @@ class CreateFilterPresenter(
 
     private fun createFilter() {
         val errors = validator.validate(currentState)
-        logD("Has Errors $errors")
         if (errors.isEmpty()) {
-            permissionHandler.hasPermission(NOTIFICATION){ hasPermission ->
-                logD("Has Permission $hasPermission")
-                if (hasPermission){
-                   saveFilter()
-                } else{
-                    logD("Requesting Permission $hasPermission")
+            permissionHandler.hasPermission(NOTIFICATION) { hasPermission ->
+                if (hasPermission) {
+                    saveFilter()
+                } else {
                     permissionHandler.requestPermission(NOTIFICATION, onGranted = {
-                        logD("Saving Filter")
                         saveFilter()
                     }, onDenied = {
                         saveFilter()
@@ -138,10 +128,9 @@ class CreateFilterPresenter(
     private fun saveFilter() {
         val model = FilterModel(
             isBuy = currentState.isBuy,
-            min = currentState.min.text.trim().toDoubleOrNull(),
-            max = currentState.max.text.trim().toDoubleOrNull(),
+            price = currentState.price.text.trim().toDouble(),
             fromMerchant = currentState.fromMerchant,
-            isRestricted = currentState.isRestricted,
+            isProMerchant = currentState.isRestricted,
             amount = currentState.amount.text.toDouble(),
             targetCurrency = currentState.selectedCurrency!!.code
         )

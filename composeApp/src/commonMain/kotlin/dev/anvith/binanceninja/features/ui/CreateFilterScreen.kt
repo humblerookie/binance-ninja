@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,7 +60,6 @@ import dev.anvith.binanceninja.core.ui.components.SnackbarProvider
 import dev.anvith.binanceninja.core.ui.components.Space
 import dev.anvith.binanceninja.core.ui.data.Constants.Assets
 import dev.anvith.binanceninja.core.ui.data.IList
-import dev.anvith.binanceninja.core.ui.data.lock
 import dev.anvith.binanceninja.core.ui.presentation.PresenterTab
 import dev.anvith.binanceninja.core.ui.presentation.SideEffect
 import dev.anvith.binanceninja.core.ui.presentation.SideEffect.MiscEffect
@@ -76,15 +74,13 @@ import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect.FilterCre
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Effect.NotificationPermissionDenied
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.AMOUNT
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.CURRENCY
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.MAX
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.MIN
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.ErrorTarget.PRICE
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.ActionTypeChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.AmountChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.CreateFilter
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromMerchant
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.IsRestricted
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MaxChanged
-import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.MinChanged
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.FromVerifiedMerchant
+import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.PriceChanged
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.Retry
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.Event.SelectCurrency
 import dev.anvith.binanceninja.features.ui.CreateFilterContract.State
@@ -118,16 +114,14 @@ object CreateFilterScreen : PresenterTab() {
             events = presenter.viewEvents,
             onPrimaryActionChanged = {
                 dispatch(ActionTypeChanged(it))
-            }, onMinChanged = {
-                dispatch(MinChanged(it))
-            }, onMaxChanged = {
-                dispatch(MaxChanged(it))
+            }, onPriceChanged = {
+                dispatch(PriceChanged(it))
             }, onAmountChanged = {
                 dispatch(AmountChanged(it))
             }, onMerchantOptionChanged = {
                 dispatch(FromMerchant(it))
             }, onRestrictedOptionChanged = {
-                dispatch(IsRestricted(it))
+                dispatch(FromVerifiedMerchant(it))
             }, onCreateFilter = {
                 dispatch(CreateFilter)
             }, onCurrencyChanged = {
@@ -177,8 +171,7 @@ object CreateFilterScreen : PresenterTab() {
         stateFlow: StateFlow<State>,
         events: Flow<SideEffect>,
         onPrimaryActionChanged: (Boolean) -> Unit,
-        onMinChanged: (TextFieldValue) -> Unit,
-        onMaxChanged: (TextFieldValue) -> Unit,
+        onPriceChanged: (TextFieldValue) -> Unit,
         onAmountChanged: (TextFieldValue) -> Unit,
         onMerchantOptionChanged: (Boolean) -> Unit,
         onRestrictedOptionChanged: (Boolean) -> Unit,
@@ -208,8 +201,7 @@ object CreateFilterScreen : PresenterTab() {
             else -> UserInputForm(
                 state = state,
                 onPrimaryActionChanged = onPrimaryActionChanged,
-                onMinChanged = onMinChanged,
-                onMaxChanged = onMaxChanged,
+                onPriceChanged = onPriceChanged,
                 onAmountChanged = onAmountChanged,
                 onMerchantOptionChanged = onMerchantOptionChanged,
                 onRestrictedOptionChanged = onRestrictedOptionChanged,
@@ -255,8 +247,7 @@ object CreateFilterScreen : PresenterTab() {
     private fun UserInputForm(
         state: State,
         onPrimaryActionChanged: (Boolean) -> Unit,
-        onMinChanged: (TextFieldValue) -> Unit,
-        onMaxChanged: (TextFieldValue) -> Unit,
+        onPriceChanged: (TextFieldValue) -> Unit,
         onAmountChanged: (TextFieldValue) -> Unit,
         onMerchantOptionChanged: (Boolean) -> Unit,
         onRestrictedOptionChanged: (Boolean) -> Unit,
@@ -275,12 +266,11 @@ object CreateFilterScreen : PresenterTab() {
                 onClick = onCurrencyChanged
             )
             Space(height = Dimens.spaceLarge)
-            PriceRangeFilter(
-                min = state.min,
-                max = state.max,
-                errors = listOf(state.validationErrors[MIN], state.validationErrors[MAX]).lock(),
-                onMinChanged = onMinChanged,
-                onMaxChanged = onMaxChanged,
+            PriceFilter(
+                isBuy = state.isBuy,
+                price = state.price,
+                hasError = state.validationErrors[PRICE],
+                onPriceChanged = onPriceChanged,
             )
             Space(height = Dimens.spaceLarge)
             AmountFilter(
@@ -293,7 +283,7 @@ object CreateFilterScreen : PresenterTab() {
             Space(height = Dimens.spaceLarge)
             MiscOptions(
                 fromMerchant = state.fromMerchant,
-                isRestricted = state.isRestricted,
+                isVerifiedMerchant = state.isRestricted,
                 onMerchantOptionChanged = onMerchantOptionChanged,
                 onRestrictedOptionChanged = onRestrictedOptionChanged,
             )
@@ -393,14 +383,14 @@ object CreateFilterScreen : PresenterTab() {
     @Composable
     private fun MiscOptions(
         fromMerchant: Boolean,
-        isRestricted: Boolean,
+        isVerifiedMerchant: Boolean,
         onMerchantOptionChanged: (Boolean) -> Unit,
         onRestrictedOptionChanged: (Boolean) -> Unit,
     ) {
         AppText.H5(text = strings.miscRequirements)
         val labels = strings.miscOptions
         val actions = listOf(onMerchantOptionChanged, onRestrictedOptionChanged)
-        val values = listOf(fromMerchant, isRestricted)
+        val values = listOf(fromMerchant, isVerifiedMerchant)
         Card(
             modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.keyline)
         ) {
@@ -426,28 +416,16 @@ object CreateFilterScreen : PresenterTab() {
     }
 
     @Composable
-    private fun PriceRangeFilter(
-        min: TextFieldValue,
-        max: TextFieldValue,
-        errors: IList<Boolean?>,
-        onMinChanged: (TextFieldValue) -> Unit,
-        onMaxChanged: (TextFieldValue) -> Unit,
+    private fun PriceFilter(
+        isBuy: Boolean,
+        price: TextFieldValue,
+        hasError: Boolean?,
+        onPriceChanged: (TextFieldValue) -> Unit,
     ) {
-        val radioOptions = listOf(
-            strings.labelGreaterThan, strings.labelLessThan
-        )
-        val items = listOf(min, max)
-        val callbacks = listOf(onMinChanged, onMaxChanged)
-        AppText.H5(text = strings.selectPrice)
-        Row {
-            radioOptions.forEachIndexed { index, label ->
-                PriceRangeInput(label, items[index], callbacks[index], hasError = errors[index])
-                if (index != radioOptions.lastIndex) {
-                    Space(width = Dimens.keyline)
-                }
-            }
-        }
 
+        val label = if (isBuy) strings.labelLessThan else strings.labelGreaterThan
+        AppText.H5(text = label)
+        PriceRangeInput(price, onPriceChanged, hasError = hasError)
     }
 
     @Composable
@@ -475,7 +453,7 @@ object CreateFilterScreen : PresenterTab() {
                     keyboardActions = KeyboardActions(onDone = {
                         onCreateFilter()
                     }),
-                    modifier = Modifier.padding(Dimens.keyline).fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = Dimens.keyline, vertical = Dimens.spaceTiny).padding(top = Dimens.keyline).fillMaxWidth(),
                     supportingText = {
                         if (hasError) {
                             AppText.Body1(
@@ -489,17 +467,15 @@ object CreateFilterScreen : PresenterTab() {
     }
 
     @Composable
-    private fun RowScope.PriceRangeInput(
-        label: String,
+    private fun PriceRangeInput(
         value: TextFieldValue,
         onChanged: (TextFieldValue) -> Unit,
         modifier: Modifier = Modifier,
         hasError: Boolean? = null
     ) {
         Card(
-            modifier = modifier.weight(1f).padding(vertical = Dimens.keyline)
+            modifier = modifier.fillMaxWidth().padding(vertical = Dimens.keyline)
         ) {
-            AppText.Body1(text = label, modifier = Modifier.padding(Dimens.spaceSmall))
             AppText.InputNormal(
                 value = value,
                 isError = hasError ?: false,
@@ -514,7 +490,8 @@ object CreateFilterScreen : PresenterTab() {
                         )
                     }
                 },
-                modifier = Modifier.padding(Dimens.keyline)
+                modifier =Modifier.padding(top = Dimens.keyline)
+                    .padding(horizontal = Dimens.keyline, vertical = Dimens.spaceTiny).fillMaxWidth(),
             )
         }
     }

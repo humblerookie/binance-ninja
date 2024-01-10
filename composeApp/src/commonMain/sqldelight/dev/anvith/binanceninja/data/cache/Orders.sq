@@ -1,0 +1,13 @@
+CREATE TABLE Orders (
+ id TEXT NOT NULL PRIMARY KEY
+);
+
+getAllOrders:
+SELECT * FROM Orders;
+
+
+deleteAll:
+DELETE FROM Orders;
+
+saveOrder:
+INSERT INTO Orders (id) VALUES (?);

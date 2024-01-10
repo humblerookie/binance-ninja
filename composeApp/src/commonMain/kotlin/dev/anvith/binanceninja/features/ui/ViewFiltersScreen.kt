@@ -162,8 +162,9 @@ object ViewFiltersScreen: PresenterTab() {
                     AppText.Body1(
                         text = strings.actionDynamicsLabel(
                             item.sourceCurrency,
-                            item.amount,
+                            item.targetCurrency,
                             item.isBuy,
+                            item.amount,
                             ThemeColors.onSurface.alpha38()
                         ),
                     )
@@ -171,12 +172,11 @@ object ViewFiltersScreen: PresenterTab() {
                     AppText.Body1(
                         text = strings.priceDynamicsLabel(
                             item.targetCurrency,
-                            item.min,
-                            item.max,
+                            item.price,
                             ThemeColors.onSurface.alpha38()
                         )
                     )
-                    if (item.isRestricted || item.fromMerchant) {
+                    if (item.isProMerchant || item.fromMerchant) {
                         Space(height = Dimens.spaceNormal)
                         Row {
                             if (item.fromMerchant) {
@@ -184,7 +184,7 @@ object ViewFiltersScreen: PresenterTab() {
                                 Space(width = Dimens.spaceNormal)
                             }
 
-                            if (item.isRestricted) {
+                            if (item.isProMerchant) {
                                 Label(strings.labelRestricted, Icons.Filled.Lock)
                             }
                         }

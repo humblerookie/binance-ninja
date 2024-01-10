@@ -17,15 +17,15 @@ interface Strings {
     val labelGreaterThan: String
     val labelLessThan: String
     val selectPrice: String
-    val selectAmount: (currency:String?) -> String
+    val selectAmount: (currency: String?) -> String
     val miscRequirements: String
     val errorCommon: String
     val miscOptions: List<String>
     val labelMerchant: String
     val labelRestricted: String
-    val priceDynamicsLabel: (currency: String, start: Double?, to: Double?,labelColor:Color) -> AnnotatedString
+    val priceDynamicsLabel: (currency: String, price: Double, labelColor: Color) -> AnnotatedString
     val labelRemove: String
-    val actionDynamicsLabel: (currency: String,amount: Double, isBuy: Boolean,labelColor:Color) -> AnnotatedString
+    val actionDynamicsLabel: (currency: String, srcCurrency:String, isBuy: Boolean, amount: Double, labelColor: Color) -> AnnotatedString
     val errorMinMaxEmpty: String
     val errorAmountEmpty: String
     val errorNoFilters: String

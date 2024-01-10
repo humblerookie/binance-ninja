@@ -5,6 +5,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>dev.anvith.binanceninja.FilterOrders.refresh</string>
+		<string>dev.anvith.binanceninja.FilterOrders.reset</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>

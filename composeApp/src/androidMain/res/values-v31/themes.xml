@@ -5,5 +5,9 @@
         <item name="android:statusBarColor">?android:attr/colorPrimaryDark</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowSplashScreenBackground">@color/colorSurface</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_animation</item>
+        <item name="android:windowSplashScreenAnimationDuration">1000</item>
+
+
     </style>
 </resources>

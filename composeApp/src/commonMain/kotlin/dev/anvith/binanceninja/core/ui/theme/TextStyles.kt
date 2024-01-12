@@ -213,6 +213,7 @@ object AppText {
         supportingText: @Composable (() -> Unit)? = null,
         trailingIcon: @Composable (() -> Unit)? = null,
         readOnly: Boolean = false,
+        prefix: @Composable (() -> Unit)? = null,
     ) {
         val style = TextModifier.size(Dimens.textSmall)
             .lineHeight(Dimens.textXXLarge)
@@ -231,6 +232,7 @@ object AppText {
             supportingText = supportingText,
             trailingIcon=trailingIcon,
             readOnly = readOnly,
+            prefix = prefix
         )
     }
 

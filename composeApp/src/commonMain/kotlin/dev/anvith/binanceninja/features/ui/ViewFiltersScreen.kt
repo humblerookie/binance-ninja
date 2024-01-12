@@ -185,7 +185,7 @@ object ViewFiltersScreen: PresenterTab() {
                             }
 
                             if (item.isProMerchant) {
-                                Label(strings.labelRestricted, Icons.Filled.Lock)
+                                Label(strings.labelProMerchant, Icons.Filled.Lock)
                             }
                         }
                     }

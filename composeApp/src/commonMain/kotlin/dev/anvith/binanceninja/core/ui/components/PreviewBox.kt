@@ -11,9 +11,9 @@ import dev.anvith.binanceninja.core.ui.theme.ThemeColors
 
 @Composable
 fun PreviewBox(isDark: Boolean = true, child: @Composable () -> Unit) {
-    BinanceNinjaTheme(useDarkTheme = isDark) {
-        Box(Modifier.background(color = ThemeColors.background).padding(vertical = Dimens.keyline)) {
-            child()
-        }
+  BinanceNinjaTheme(useDarkTheme = isDark) {
+    Box(Modifier.background(color = ThemeColors.background).padding(vertical = Dimens.keyline)) {
+      child()
     }
+  }
 }

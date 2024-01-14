@@ -11,28 +11,24 @@ import dev.anvith.binanceninja.core.ui.theme.Dimens
 
 class PrimaryButtonPreviews {
 
+  @Preview
+  @Composable
+  private fun PrimaryButtonPreview1() = PreviewBox {
+    PrimaryButton(
+      label = "Login",
+      onClick = {},
+      modifier = Modifier.padding(Dimens.keyline).fillMaxWidth()
+    )
+  }
 
-    @Preview
-    @Composable
-    private fun PrimaryButtonPreview1() = PreviewBox {
-        PrimaryButton(
-            label = "Login",
-            onClick = {},
-            modifier = Modifier
-                .padding(Dimens.keyline)
-                .fillMaxWidth()
-        )
-    }
-
-    @Preview
-    @Composable
-    private fun PrimaryButtonPreview2() = PreviewBox(isDark = false) {
-        PrimaryButton(
-            label = "Login",
-            onClick = {},
-            modifier = Modifier
-                .padding(Dimens.keyline)
-                .fillMaxWidth()
-        )
+  @Preview
+  @Composable
+  private fun PrimaryButtonPreview2() =
+    PreviewBox(isDark = false) {
+      PrimaryButton(
+        label = "Login",
+        onClick = {},
+        modifier = Modifier.padding(Dimens.keyline).fillMaxWidth()
+      )
     }
 }

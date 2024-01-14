@@ -7,5 +7,5 @@ import me.tatarka.inject.annotations.Component
 @ActivityScope
 abstract class HomeComponent(@Component val applicationComponent: AppComponent) {
 
-    abstract val homeFactory: HomeApplication
+  abstract val homeFactory: HomeApplication
 }

@@ -19,77 +19,83 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 class CurrencyRepository(
-    private val queries: CurrencyQueries,
-    private val mapper: CurrencyMapper,
-    private val api: PeerToPeerApi,
-    private val userDataStore: UserDataStore,
-    private val dispatcherProvider: DispatcherProvider
+  private val queries: CurrencyQueries,
+  private val mapper: CurrencyMapper,
+  private val api: PeerToPeerApi,
+  private val userDataStore: UserDataStore,
+  private val dispatcherProvider: DispatcherProvider
 ) {
 
-    fun saveUserCurrency(currency: CurrencyModel) {
-        userDataStore.userCurrency = currency.code
-    }
+  fun saveUserCurrency(currency: CurrencyModel) {
+    userDataStore.userCurrency = currency.code
+  }
 
-    fun getUserCurrency() = userDataStore.userCurrency
-    suspend fun getAllFiatCurrencies(
-        forceRefresh: Boolean = false,
-        onSyncFailure: (Throwable) -> Unit
-    ): Flow<List<CurrencyModel>> =
-        withContext(dispatcherProvider.io()) {
-            launch {
-                var isStale = forceRefresh
-                if (!forceRefresh) {
-                    val currencies = queries.getAllCurrencies().executeAsList()
-                    isStale = currencies.isEmpty()
-                }
-                if (isStale) {
-                    api.getFiatCurrencies().whenSuccess {
-                        try {
-                            insertCurrencies(isFiat = true, filter = it.data)
-                        } catch (e: Exception) {
-                            logE(e.toString(), e)
-                            onSyncFailure(e)
-                        }
-                    }.whenError {
-                        onSyncFailure(it)
-                    }
-                }
-            }
-            queries.getAllCurrencies().asFlow().map { it.executeAsList() }
-                .map { it.map(mapper::toDomain) }
+  fun getUserCurrency() = userDataStore.userCurrency
+
+  suspend fun getAllFiatCurrencies(
+    forceRefresh: Boolean = false,
+    onSyncFailure: (Throwable) -> Unit
+  ): Flow<List<CurrencyModel>> =
+    withContext(dispatcherProvider.io()) {
+      launch {
+        var isStale = forceRefresh
+        if (!forceRefresh) {
+          val currencies = queries.getAllCurrencies().executeAsList()
+          isStale = currencies.isEmpty()
         }
-
-    private suspend fun insertCurrencies(
-        filter: Iterable<CurrencyApiModel>,
-        isFiat: Boolean,
-    ) = withContext(dispatcherProvider.io()) {
-        launch {
-            queries.transaction {
-                filter.forEach {
-                    queries.addCurrency(mapper.toData(it, isFiat))
-                }
+        if (isStale) {
+          api
+            .getFiatCurrencies()
+            .whenSuccess {
+              try {
+                insertCurrencies(isFiat = true, filter = it.data)
+              } catch (e: Exception) {
+                logE(e.toString(), e)
+                onSyncFailure(e)
+              }
             }
+            .whenError { onSyncFailure(it) }
         }
+      }
+      queries
+        .getAllCurrencies()
+        .asFlow()
+        .map { it.executeAsList() }
+        .map { it.map(mapper::toDomain) }
     }
 
-
-    suspend fun getFiatCurrencies() = withContext(dispatcherProvider.io()) {
-        queries.getFiatCurrencies().asFlow().map { it.executeAsList() }
-            .map { it.map(mapper::toDomain) }
+  private suspend fun insertCurrencies(
+    filter: Iterable<CurrencyApiModel>,
+    isFiat: Boolean,
+  ) =
+    withContext(dispatcherProvider.io()) {
+      launch {
+        queries.transaction { filter.forEach { queries.addCurrency(mapper.toData(it, isFiat)) } }
+      }
     }
 
-    suspend fun getFiatCurrenciesOrEmpty() = withContext(dispatcherProvider.io()) {
-        queries.getAllCurrencies().executeAsList().map(mapper::toDomain)
+  suspend fun getFiatCurrencies() =
+    withContext(dispatcherProvider.io()) {
+      queries
+        .getFiatCurrencies()
+        .asFlow()
+        .map { it.executeAsList() }
+        .map { it.map(mapper::toDomain) }
     }
 
-    suspend fun getCryptoCurrencies() = withContext(dispatcherProvider.io()) {
-        queries.getCryptoCurrencies().asFlow().map { it.executeAsList() }
-            .map { it.map(mapper::toDomain) }
+  suspend fun getFiatCurrenciesOrEmpty() =
+    withContext(dispatcherProvider.io()) {
+      queries.getAllCurrencies().executeAsList().map(mapper::toDomain)
     }
 
-    suspend fun removeAll() = withContext(dispatcherProvider.io()) {
-        queries.removeAll()
+  suspend fun getCryptoCurrencies() =
+    withContext(dispatcherProvider.io()) {
+      queries
+        .getCryptoCurrencies()
+        .asFlow()
+        .map { it.executeAsList() }
+        .map { it.map(mapper::toDomain) }
     }
 
-
+  suspend fun removeAll() = withContext(dispatcherProvider.io()) { queries.removeAll() }
 }

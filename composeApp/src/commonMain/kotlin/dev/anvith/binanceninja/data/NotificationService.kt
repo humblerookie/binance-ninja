@@ -4,5 +4,5 @@ import dev.anvith.binanceninja.domain.models.NotificationModel
 
 expect class NotificationService {
 
-    fun notify(items: List<NotificationModel>)
+  fun notify(items: List<NotificationModel>)
 }

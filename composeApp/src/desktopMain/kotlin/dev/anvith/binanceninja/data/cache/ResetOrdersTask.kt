@@ -17,32 +17,35 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ResetOrdersTask(
-    dispatcherProvider: DispatcherProvider,
-    private val filterRepository: FilterRepository,
+  dispatcherProvider: DispatcherProvider,
+  private val filterRepository: FilterRepository,
 ) : BackgroundTask {
-    private val scope =
-        CoroutineScope(SupervisorJob() + dispatcherProvider.io() + CoroutineExceptionHandler { _, exception ->
-            logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
-        })
-    private var scheduledExecutorService: ScheduledExecutorService? = null
-    private var future: ScheduledFuture<*>? = null
-
-    override fun schedule(executor: RequestExecutor) {
-        scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
-        val task = Runnable {
-            scope.launch {
-                filterRepository.resetOrders()
-            }
+  private val scope =
+    CoroutineScope(
+      SupervisorJob() +
+        dispatcherProvider.io() +
+        CoroutineExceptionHandler { _, exception ->
+          logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
         }
+    )
+  private var scheduledExecutorService: ScheduledExecutorService? = null
+  private var future: ScheduledFuture<*>? = null
 
-        future = scheduledExecutorService!!.scheduleAtFixedRate(
-            task, 0, Constants.INTERVAL_DAYS, TimeUnit.DAYS
-        )
+  override fun schedule(executor: RequestExecutor) {
+    scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
+    val task = Runnable { scope.launch { filterRepository.resetOrders() } }
 
-    }
+    future =
+      scheduledExecutorService!!.scheduleAtFixedRate(
+        task,
+        0,
+        Constants.INTERVAL_DAYS,
+        TimeUnit.DAYS
+      )
+  }
 
-    override fun cancel() {
-        future?.cancel(true)
-        scheduledExecutorService?.shutdown()
-    }
+  override fun cancel() {
+    future?.cancel(true)
+    scheduledExecutorService?.shutdown()
+  }
 }

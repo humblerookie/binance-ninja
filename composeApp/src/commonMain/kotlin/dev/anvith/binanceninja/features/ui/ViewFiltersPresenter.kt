@@ -11,41 +11,33 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ViewFiltersPresenter(
-    private val repository: FilterRepository,
-    private val dispatcherProvider: DispatcherProvider,
+  private val repository: FilterRepository,
+  private val dispatcherProvider: DispatcherProvider,
 ) : BasePresenter<State, Event>(dispatcherProvider) {
 
-    init {
-        subscribeToFilters()
-    }
+  init {
+    subscribeToFilters()
+  }
 
-    private fun subscribeToFilters() {
+  private fun subscribeToFilters() {
+    launch(dispatcherProvider.io()) {
+      updateState { it.copy(isLoading = true) }
+      repository.getFilters().collect {
+        updateState { state -> state.copy(filters = it.lock(), isLoading = false) }
+      }
+    }
+  }
+
+  override fun initState(): State = State()
+
+  override fun onEvent(event: Event) {
+    when (event) {
+      is RemoveFilter -> {
         launch(dispatcherProvider.io()) {
-            updateState {
-                it.copy(isLoading = true)
-            }
-            repository.getFilters().collect {
-                updateState { state ->
-                    state.copy(filters = it.lock(), isLoading = false)
-                }
-            }
+          repository.removeFilter(event.filter.id)
+          updateState { it.copy(filters = (it.filters - event.filter).lock()) }
         }
+      }
     }
-
-    override fun initState(): State = State()
-
-    override fun onEvent(event: Event) {
-        when (event) {
-            is RemoveFilter -> {
-                launch(dispatcherProvider.io()) {
-                    repository.removeFilter(event.filter.id)
-                    updateState {
-                        it.copy(filters = (it.filters - event.filter).lock())
-                    }
-                }
-            }
-        }
-    }
-
-
+  }
 }

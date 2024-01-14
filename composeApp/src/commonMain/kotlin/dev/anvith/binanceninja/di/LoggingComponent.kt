@@ -7,7 +7,5 @@ import me.tatarka.inject.annotations.Provides
 
 interface LoggingComponent {
 
-    @Provides
-    @IntoSet
-    fun LoggingInitializer.bind(): Initializer = this
+  @Provides @IntoSet fun LoggingInitializer.bind(): Initializer = this
 }

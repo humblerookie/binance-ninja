@@ -14,49 +14,53 @@ import dev.anvith.binanceninja.features.ui.ViewFiltersScreen
 import dev.anvith.binanceninja.features.ui.validators.CreateFilterValidator
 import me.tatarka.inject.annotations.Inject
 
-
-private typealias CreateFilterPresenterFactory = (
+private typealias CreateFilterPresenterFactory =
+  (
     repository: FilterRepository,
     validator: CreateFilterValidator,
     dispatcherProvider: DispatcherProvider,
-) -> CreateFilterPresenter
+  ) -> CreateFilterPresenter
 
-
-private typealias ViewFiltersPresenterFactory = (
+private typealias ViewFiltersPresenterFactory =
+  (
     repository: FilterRepository,
     dispatcherProvider: DispatcherProvider,
-) -> ViewFiltersPresenter
-
+  ) -> ViewFiltersPresenter
 
 @Inject
 @ActivityScope
 class AppPresenter(
-    private val dispatcherProvider: DispatcherProvider,
-    private val createFilterPresenterFactory: CreateFilterPresenterFactory,
-    private val viewFiltersPresenterFactory: ViewFiltersPresenterFactory,
-    private val createFilterValidator: CreateFilterValidator,
-    private val repository: FilterRepository,
+  private val dispatcherProvider: DispatcherProvider,
+  private val createFilterPresenterFactory: CreateFilterPresenterFactory,
+  private val viewFiltersPresenterFactory: ViewFiltersPresenterFactory,
+  private val createFilterValidator: CreateFilterValidator,
+  private val repository: FilterRepository,
 ) {
-    private lateinit var children: IList<Tab>
-    fun getChildren(): IList<Tab> {
-        if (!::children.isInitialized) {
-            children = listOf(
-                CreateFilterScreen.also {
-                    (BasePresenter.getPresenter(it.key) {
-                        createFilterPresenterFactory(
-                            repository,
-                            createFilterValidator,
-                            dispatcherProvider
-                        )
-                    }).bind(it)
-                },
-                ViewFiltersScreen.also {
-                    BasePresenter.getPresenter(it.key) {
-                        viewFiltersPresenterFactory(repository, dispatcherProvider)
-                    }.bind(it)
+  private lateinit var children: IList<Tab>
+
+  fun getChildren(): IList<Tab> {
+    if (!::children.isInitialized) {
+      children =
+        listOf(
+            CreateFilterScreen.also {
+              (BasePresenter.getPresenter(it.key) {
+                  createFilterPresenterFactory(
+                    repository,
+                    createFilterValidator,
+                    dispatcherProvider
+                  )
+                })
+                .bind(it)
+            },
+            ViewFiltersScreen.also {
+              BasePresenter.getPresenter(it.key) {
+                  viewFiltersPresenterFactory(repository, dispatcherProvider)
                 }
-            ).lock()
-        }
-        return children
+                .bind(it)
+            }
+          )
+          .lock()
     }
+    return children
+  }
 }

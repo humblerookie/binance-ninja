@@ -9,17 +9,18 @@ import cafe.adriel.voyager.navigator.tab.Tab
 
 abstract class PresenterTab : Tab, ScreenLifecycleProvider, PresenterScreen {
 
-    override val key = uniqueScreenKey
+  override val key = uniqueScreenKey
 
-    private val lifecycleOwner = AppScreenLifecycleOwner()
-    override fun getLifecycleOwner() = lifecycleOwner
+  private val lifecycleOwner = AppScreenLifecycleOwner()
+
+  override fun getLifecycleOwner() = lifecycleOwner
 }
 
 class AppScreenLifecycleOwner : ScreenLifecycleOwner, JavaSerializable {
-    override fun onDispose(screen: Screen) {
-        if (screen is PresenterScreen) {
-            BasePresenter.removeBinding(screen.key)
-        }
-        super.onDispose(screen)
+  override fun onDispose(screen: Screen) {
+    if (screen is PresenterScreen) {
+      BasePresenter.removeBinding(screen.key)
     }
+    super.onDispose(screen)
+  }
 }

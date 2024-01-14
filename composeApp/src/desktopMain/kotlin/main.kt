@@ -13,22 +13,18 @@ import me.tatarka.inject.annotations.Inject
 typealias HomeApplication = () -> Unit
 
 fun main() {
-    val component = HomeComponent::class.create(AppComponent::class.create())
-    component.applicationComponent.initializers.forEach(Initializer::initialize)
-    component.homeFactory()
+  val component = HomeComponent::class.create(AppComponent::class.create())
+  component.applicationComponent.initializers.forEach(Initializer::initialize)
+  component.homeFactory()
 }
 
 @Inject
 fun HomeApplication(app: App) {
-    application {
-        Window(onCloseRequest = ::exitApplication, title = strings.appName) {
-            app()
-        }
-    }
+  application { Window(onCloseRequest = ::exitApplication, title = strings.appName) { app() } }
 }
 
 @Preview
 @Composable
 fun AppDesktopPreview() {
-    //App()
+  // App()
 }

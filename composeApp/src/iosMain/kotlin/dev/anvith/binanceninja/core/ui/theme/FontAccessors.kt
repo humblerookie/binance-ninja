@@ -9,13 +9,12 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.resource
 
 private val cache: MutableMap<String, Font> = mutableMapOf()
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 actual fun font(name: String, res: String, weight: FontWeight, style: FontStyle): Font {
-    return cache.getOrPut(res) {
-        val byteArray = runBlocking {
-            resource("font/$res.ttf").readBytes()
-        }
-        androidx.compose.ui.text.platform.Font(res, byteArray, weight, style)
-    }
+  return cache.getOrPut(res) {
+    val byteArray = runBlocking { resource("font/$res.ttf").readBytes() }
+    androidx.compose.ui.text.platform.Font(res, byteArray, weight, style)
+  }
 }

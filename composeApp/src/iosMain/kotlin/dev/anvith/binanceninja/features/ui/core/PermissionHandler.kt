@@ -15,55 +15,46 @@ import platform.UserNotifications.UNUserNotificationCenter
 @Inject
 @AppScope
 actual class PermissionHandler {
-    actual fun requestPermission(
-        permission: PermissionType,
-        onGranted: () -> Unit,
-        onDenied: () -> Unit
-    ) {
-        when (permission) {
-            PermissionType.NOTIFICATION -> {
-                UNUserNotificationCenter.currentNotificationCenter()
-                    .requestAuthorizationWithOptions(
-                        UNAuthorizationOptionAlert
-                                or UNAuthorizationOptionSound
-                                or UNAuthorizationOptionBadge
-                    ) { isAuthorized, error ->
-                        if (error != null) logE(
-                            "Error requesting notification permission",
-                            error.toException(),
-                        )
-                        if (isAuthorized) onGranted() else onDenied()
-                    }
-            }
+  actual fun requestPermission(
+    permission: PermissionType,
+    onGranted: () -> Unit,
+    onDenied: () -> Unit
+  ) {
+    when (permission) {
+      PermissionType.NOTIFICATION -> {
+        UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptions(
+          UNAuthorizationOptionAlert or UNAuthorizationOptionSound or UNAuthorizationOptionBadge
+        ) { isAuthorized, error ->
+          if (error != null)
+            logE(
+              "Error requesting notification permission",
+              error.toException(),
+            )
+          if (isAuthorized) onGranted() else onDenied()
         }
-
+      }
     }
+  }
 
-    actual fun hasPermission(
-        permission: PermissionType,
-        onPermissionResult: (Boolean) -> Unit
-    ) {
-        when (permission) {
-            PermissionType.NOTIFICATION -> checkNotificationStatus(onPermissionResult)
+  actual fun hasPermission(permission: PermissionType, onPermissionResult: (Boolean) -> Unit) {
+    when (permission) {
+      PermissionType.NOTIFICATION -> checkNotificationStatus(onPermissionResult)
+    }
+  }
+
+  private fun checkNotificationStatus(onPermissionResult: (Boolean) -> Unit) {
+    UNUserNotificationCenter.currentNotificationCenter()
+      .getNotificationSettingsWithCompletionHandler { settings ->
+        when (settings!!.authorizationStatus) {
+          UNAuthorizationStatusAuthorized,
+          UNAuthorizationStatusEphemeral,
+          UNAuthorizationStatusProvisional -> {
+            onPermissionResult(true)
+          }
+          else -> {
+            onPermissionResult(false)
+          }
         }
-
-    }
-
-    private fun checkNotificationStatus(onPermissionResult: (Boolean) -> Unit) {
-        UNUserNotificationCenter.currentNotificationCenter()
-            .getNotificationSettingsWithCompletionHandler { settings ->
-                when (settings!!.authorizationStatus) {
-                    UNAuthorizationStatusAuthorized,
-                    UNAuthorizationStatusEphemeral,
-                    UNAuthorizationStatusProvisional -> {
-                        onPermissionResult(true)
-                    }
-
-                    else -> {
-                        onPermissionResult(false)
-                    }
-                }
-            }
-    }
-
+      }
+  }
 }

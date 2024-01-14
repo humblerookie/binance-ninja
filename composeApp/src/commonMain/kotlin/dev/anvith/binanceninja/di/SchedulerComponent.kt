@@ -7,9 +7,5 @@ import me.tatarka.inject.annotations.Provides
 
 interface SchedulerComponent {
 
-    @Provides
-    @IntoSet
-    fun PeriodicScheduler.bind(): Initializer = this
-
-
+  @Provides @IntoSet fun PeriodicScheduler.bind(): Initializer = this
 }

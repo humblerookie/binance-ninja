@@ -16,38 +16,34 @@ import platform.UserNotifications.UNUserNotificationCenter
 @Inject
 @AppScope
 actual class NotificationService(
-    private val userDataStore: UserDataStore,
-    private val permissionHandler: PermissionHandler,
+  private val userDataStore: UserDataStore,
+  private val permissionHandler: PermissionHandler,
 ) {
-    actual fun notify(items: List<NotificationModel>) {
-        permissionHandler.hasPermission(PermissionType.NOTIFICATION) { hasPermission ->
-            if (hasPermission) {
-                items.forEach {
-                    val content = UNMutableNotificationContent().apply {
-                        setTitle(it.title)
-                        setBody(it.message)
-                        setSound(UNNotificationSound.defaultSound())
-                    }
-                    val trigger =
-                        UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(
-                            1.0,
-                            repeats = false
-                        )
-                    val identifier = userDataStore.notificationId + 1
-                    userDataStore.notificationId = identifier
-                    val request = UNNotificationRequest.requestWithIdentifier(
-                        identifier.toString(),
-                        content = content,
-                        trigger = trigger
-                    )
-                    val center = UNUserNotificationCenter.currentNotificationCenter()
-
-                    center.addNotificationRequest(request) { error ->
-                        logE("IOS Notification Error: $error")
-                    }
-                }
+  actual fun notify(items: List<NotificationModel>) {
+    permissionHandler.hasPermission(PermissionType.NOTIFICATION) { hasPermission ->
+      if (hasPermission) {
+        items.forEach {
+          val content =
+            UNMutableNotificationContent().apply {
+              setTitle(it.title)
+              setBody(it.message)
+              setSound(UNNotificationSound.defaultSound())
             }
-        }
-    }
+          val trigger =
+            UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, repeats = false)
+          val identifier = userDataStore.notificationId + 1
+          userDataStore.notificationId = identifier
+          val request =
+            UNNotificationRequest.requestWithIdentifier(
+              identifier.toString(),
+              content = content,
+              trigger = trigger
+            )
+          val center = UNUserNotificationCenter.currentNotificationCenter()
 
+          center.addNotificationRequest(request) { error -> logE("IOS Notification Error: $error") }
+        }
+      }
+    }
+  }
 }

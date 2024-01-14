@@ -20,9 +20,7 @@ import me.tatarka.inject.annotations.Component
 
 @Component
 @ActivityScope
-abstract class HomeViewControllerComponent(
-    @Component val applicationComponent: AppComponent
-) {
+abstract class HomeViewControllerComponent(@Component val applicationComponent: AppComponent) {
 
-    abstract val homeViewControllerFactory: MainViewController
+  abstract val homeViewControllerFactory: MainViewController
 }

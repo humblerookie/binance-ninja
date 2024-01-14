@@ -14,30 +14,31 @@ import dev.anvith.binanceninja.core.ui.theme.Dimens
 
 @Composable
 fun AppSwitch(
-    onLabel: String,
-    offLabel: String,
-    isChecked: Boolean,
-    modifier: Modifier = Modifier,
-    offColor: Color = AppThemeColors.offColor,
-    onColor: Color = AppThemeColors.onColor,
-    onCheckChanged: (isChecked: Boolean) -> Unit = {},
+  onLabel: String,
+  offLabel: String,
+  isChecked: Boolean,
+  modifier: Modifier = Modifier,
+  offColor: Color = AppThemeColors.offColor,
+  onColor: Color = AppThemeColors.onColor,
+  onCheckChanged: (isChecked: Boolean) -> Unit = {},
 ) {
-    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        AppText.H4(text = offLabel.uppercase())
-        Switch(
-            checked = isChecked,
-            modifier = Modifier.padding(horizontal = Dimens.spaceNormal),
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = onColor,
-                checkedBorderColor = onColor.copy(alpha = 0.8f),
-                checkedTrackColor = onColor.copy(alpha = 0.2f),
-                checkedIconColor = onColor.copy(alpha = 0.5f),
-                uncheckedThumbColor = offColor,
-                uncheckedBorderColor = offColor.copy(alpha = 0.8f),
-                uncheckedTrackColor = offColor.copy(alpha = 0.2f),
-            ),
-            onCheckedChange = onCheckChanged
-        )
-        AppText.H4(text = onLabel.uppercase())
-    }
+  Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+    AppText.H4(text = offLabel.uppercase())
+    Switch(
+      checked = isChecked,
+      modifier = Modifier.padding(horizontal = Dimens.spaceNormal),
+      colors =
+        SwitchDefaults.colors(
+          checkedThumbColor = onColor,
+          checkedBorderColor = onColor.copy(alpha = 0.8f),
+          checkedTrackColor = onColor.copy(alpha = 0.2f),
+          checkedIconColor = onColor.copy(alpha = 0.5f),
+          uncheckedThumbColor = offColor,
+          uncheckedBorderColor = offColor.copy(alpha = 0.8f),
+          uncheckedTrackColor = offColor.copy(alpha = 0.2f),
+        ),
+      onCheckedChange = onCheckChanged
+    )
+    AppText.H4(text = onLabel.uppercase())
+  }
 }

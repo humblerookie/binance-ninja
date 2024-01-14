@@ -8,9 +8,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 actual class DriverFactory {
-    actual fun createDriver(): SqlDriver {
-        return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
-            NinjaDatabase.Schema.create(it)
-        }
-    }
+  actual fun createDriver(): SqlDriver {
+    return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { NinjaDatabase.Schema.create(it) }
+  }
 }

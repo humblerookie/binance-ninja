@@ -6,19 +6,15 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 actual class PermissionHandler {
-    actual fun requestPermission(
-        permission: PermissionType,
-        onGranted: () -> Unit,
-        onDenied: () -> Unit
-    ) {
-        onGranted()
-    }
+  actual fun requestPermission(
+    permission: PermissionType,
+    onGranted: () -> Unit,
+    onDenied: () -> Unit
+  ) {
+    onGranted()
+  }
 
-    actual fun hasPermission(
-        permission: PermissionType,
-        onPermissionResult: (Boolean) -> Unit
-    ) {
-        onPermissionResult(true)
-    }
-
+  actual fun hasPermission(permission: PermissionType, onPermissionResult: (Boolean) -> Unit) {
+    onPermissionResult(true)
+  }
 }

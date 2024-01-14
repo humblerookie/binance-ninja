@@ -7,13 +7,12 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.UIKit.UIViewController
 
-
 @Component
 @AppScope
 abstract class AppComponent(@get:Provides val uiViewControllerProvider: () -> UIViewController) :
-    SharedAppComponent() {
+  SharedAppComponent() {
 
-    abstract val filterRepository: FilterRepository
-    abstract val currencyRepository: CurrencyRepository
-    abstract val initializers: Set<Initializer>
+  abstract val filterRepository: FilterRepository
+  abstract val currencyRepository: CurrencyRepository
+  abstract val initializers: Set<Initializer>
 }

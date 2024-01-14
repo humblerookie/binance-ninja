@@ -13,39 +13,35 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
 internal interface ApiComponent : PlatformHttpComponent {
-    @Provides
-    fun httpClient(
-        engine: HttpClientEngine,
-        json: Json,
-    ): HttpClient {
-        return HttpClient(engine) {
-            install(HttpTimeout) {
-                requestTimeoutMillis = TIMEOUT
-                socketTimeoutMillis = TIMEOUT
-                connectTimeoutMillis = TIMEOUT
-            }
-            install(ContentNegotiation) {
-                json(json)
-            }
-            install(Logging) {
-                logger = HttpLogger
-                level = LogLevel.ALL
-            }
-        }
+  @Provides
+  fun httpClient(
+    engine: HttpClientEngine,
+    json: Json,
+  ): HttpClient {
+    return HttpClient(engine) {
+      install(HttpTimeout) {
+        requestTimeoutMillis = TIMEOUT
+        socketTimeoutMillis = TIMEOUT
+        connectTimeoutMillis = TIMEOUT
+      }
+      install(ContentNegotiation) { json(json) }
+      install(Logging) {
+        logger = HttpLogger
+        level = LogLevel.ALL
+      }
     }
+  }
 
-    @Provides
-    fun jsonConfig(): Json {
-        return Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-            prettyPrint = true
-            encodeDefaults= true
-        }
+  @Provides
+  fun jsonConfig(): Json {
+    return Json {
+      isLenient = true
+      ignoreUnknownKeys = true
+      prettyPrint = true
+      encodeDefaults = true
     }
+  }
 
-
-    @Provides
-    fun peerToPeerApi(client: HttpClient, json: Json): PeerToPeerApi =
-        PeerToPeerApiImpl(client, json)
+  @Provides
+  fun peerToPeerApi(client: HttpClient, json: Json): PeerToPeerApi = PeerToPeerApiImpl(client, json)
 }

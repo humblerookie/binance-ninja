@@ -10,55 +10,56 @@ import dev.anvith.binanceninja.core.ui.components.AppSwitch
 import dev.anvith.binanceninja.core.ui.components.PreviewBox
 import dev.anvith.binanceninja.core.ui.theme.AppThemeColors
 
-
 @Preview("Light Mode: Checked")
 @Composable
-private fun CheckBox1() = PreviewBox(isDark = false) {
+private fun CheckBox1() =
+  PreviewBox(isDark = false) {
     AppSwitch(
-        onLabel = strings.actionBuy,
-        offLabel = strings.actionSell,
-        onColor = AppThemeColors.onColor,
-        offColor = AppThemeColors.offColor,
-        isChecked = true,
-        modifier = Modifier.padding(30.dp)
+      onLabel = strings.actionBuy,
+      offLabel = strings.actionSell,
+      onColor = AppThemeColors.onColor,
+      offColor = AppThemeColors.offColor,
+      isChecked = true,
+      modifier = Modifier.padding(30.dp)
     )
-}
+  }
 
 @Preview("Light Mode: Unchecked")
 @Composable
-private fun CheckBox2() = PreviewBox(isDark = false) {
+private fun CheckBox2() =
+  PreviewBox(isDark = false) {
     AppSwitch(
-        onLabel = strings.actionBuy,
-        offLabel = strings.actionSell,
-        onColor = AppThemeColors.onColor,
-        offColor = AppThemeColors.offColor,
-        isChecked = false,
-        modifier = Modifier.padding(30.dp)
+      onLabel = strings.actionBuy,
+      offLabel = strings.actionSell,
+      onColor = AppThemeColors.onColor,
+      offColor = AppThemeColors.offColor,
+      isChecked = false,
+      modifier = Modifier.padding(30.dp)
     )
-}
+  }
 
 @Preview("Dark Mode: Checked")
 @Composable
 private fun CheckBox3() = PreviewBox {
-    AppSwitch(
-        onLabel = strings.actionBuy,
-        offLabel = strings.actionSell,
-        onColor = AppThemeColors.onColor,
-        offColor = AppThemeColors.offColor,
-        isChecked = true,
-        modifier = Modifier.padding(30.dp)
-    )
+  AppSwitch(
+    onLabel = strings.actionBuy,
+    offLabel = strings.actionSell,
+    onColor = AppThemeColors.onColor,
+    offColor = AppThemeColors.offColor,
+    isChecked = true,
+    modifier = Modifier.padding(30.dp)
+  )
 }
 
 @Preview("Dark Mode: Unchecked")
 @Composable
 private fun CheckBox4() = PreviewBox {
-    AppSwitch(
-        onLabel = strings.actionBuy,
-        offLabel = strings.actionSell,
-        onColor = AppThemeColors.onColor,
-        offColor = AppThemeColors.offColor,
-        isChecked = false,
-        modifier = Modifier.padding(30.dp)
-    )
+  AppSwitch(
+    onLabel = strings.actionBuy,
+    offLabel = strings.actionSell,
+    onColor = AppThemeColors.onColor,
+    offColor = AppThemeColors.offColor,
+    isChecked = false,
+    modifier = Modifier.padding(30.dp)
+  )
 }

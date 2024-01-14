@@ -33,63 +33,54 @@ import dev.anvith.binanceninja.core.ui.theme.TextModifier
 import dev.anvith.binanceninja.core.ui.theme.ThemeColors
 import me.tatarka.inject.annotations.Inject
 
-
 typealias App = @Composable () -> Unit
 
 @Inject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(appPresenter: AppPresenter) {
-    BinanceNinjaTheme {
-        ProvideStrings {
-            TabNavigator(appPresenter.getChildren().first()) {
-                val snackbarHostState = remember { SnackbarHostState() }
-                val scope = rememberCoroutineScope()
-                val provider by remember { mutableStateOf(getSnackbar(scope, snackbarHostState)) }
-                CompositionLocalProvider(LocalSnackbarProvider provides provider) {
-                    Scaffold(
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                        content = {
-                            Box(modifier = Modifier.padding(it)) {
-                                CurrentTab()
-                            }
-                        },
-                        topBar = {
-                            TopAppBar(
-                                title = {
-                                    AppText.H3(
-                                        text = strings.appName,
-                                        textModifier = TextModifier.color(ThemeColors.onPrimary)
-                                    )
-                                },
-                                colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary)
-                            )
-                        },
-                        bottomBar = {
-                            NavigationBar {
-                                appPresenter.getChildren().map {
-                                    TabNavigationItem(it)
-                                }
-                            }
-                        }
-                    )
-                }
+  BinanceNinjaTheme {
+    ProvideStrings {
+      TabNavigator(appPresenter.getChildren().first()) {
+        val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
+        val provider by remember { mutableStateOf(getSnackbar(scope, snackbarHostState)) }
+        CompositionLocalProvider(LocalSnackbarProvider provides provider) {
+          Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            content = { Box(modifier = Modifier.padding(it)) { CurrentTab() } },
+            topBar = {
+              TopAppBar(
+                title = {
+                  AppText.H3(
+                    text = strings.appName,
+                    textModifier = TextModifier.color(ThemeColors.onPrimary)
+                  )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary)
+              )
+            },
+            bottomBar = {
+              NavigationBar { appPresenter.getChildren().map { TabNavigationItem(it) } }
             }
+          )
         }
+      }
     }
+  }
 }
-
 
 @Composable
 private fun RowScope.TabNavigationItem(tab: Tab) {
-    val tabNavigator = LocalTabNavigator.current
-    NavigationBarItem(
-        selected = tabNavigator.current == tab,
-        onClick = { tabNavigator.current = tab },
-        icon = {
-            Icon(
-                painter = tab.options.icon!!,
-                contentDescription = tab.options.title,
-            )
-        })
+  val tabNavigator = LocalTabNavigator.current
+  NavigationBarItem(
+    selected = tabNavigator.current == tab,
+    onClick = { tabNavigator.current = tab },
+    icon = {
+      Icon(
+        painter = tab.options.icon!!,
+        contentDescription = tab.options.title,
+      )
+    }
+  )
 }

@@ -6,22 +6,19 @@ import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Inject
 import me.tatarka.inject.annotations.Provides
 
-actual interface MiscComponent: TasksComponent {
+actual interface MiscComponent : TasksComponent {
 
-    @Provides
-    @AppScope
-    fun DesktopDispatcherProvider.bind(): DispatcherProvider = this
+  @Provides @AppScope fun DesktopDispatcherProvider.bind(): DispatcherProvider = this
 }
-
 
 @Inject
 class DesktopDispatcherProvider : DispatcherProvider {
 
-    override fun io() = Dispatchers.IO
+  override fun io() = Dispatchers.IO
 
-    override fun main() = Dispatchers.Default
+  override fun main() = Dispatchers.Default
 
-    override fun default() = Dispatchers.Default
+  override fun default() = Dispatchers.Default
 
-    override fun unconfined() = Dispatchers.Unconfined
+  override fun unconfined() = Dispatchers.Unconfined
 }

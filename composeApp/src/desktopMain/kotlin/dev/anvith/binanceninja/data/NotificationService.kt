@@ -9,15 +9,10 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 actual class NotificationService {
-    actual fun notify(items: List<NotificationModel>) {
+  actual fun notify(items: List<NotificationModel>) {
 
-        items.forEach {
-            Notify.create()
-                .title(it.title)
-                .text(it.message)
-                .theme(Theme.defaultDark)
-                .showInformation()
-
-        }
+    items.forEach {
+      Notify.create().title(it.title).text(it.message).theme(Theme.defaultDark).showInformation()
     }
+  }
 }

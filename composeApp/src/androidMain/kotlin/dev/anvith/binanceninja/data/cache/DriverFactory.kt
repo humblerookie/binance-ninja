@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @AppScope
 actual class DriverFactory(private val context: Context) {
-    actual fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(NinjaDatabase.Schema, context, DB_NAME)
-    }
+  actual fun createDriver(): SqlDriver {
+    return AndroidSqliteDriver(NinjaDatabase.Schema, context, DB_NAME)
+  }
 }

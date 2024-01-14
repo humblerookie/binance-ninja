@@ -9,9 +9,9 @@ import dev.anvith.binanceninja.domain.models.ErrorStrings.Sync
 
 @Composable
 fun ErrorStrings.localized(): String {
-    return when (this) {
-        Generic -> strings.errorCommon
-        Network -> strings.errorNetwork
-        Sync -> strings.errorSync
-    }
+  return when (this) {
+    Generic -> strings.errorCommon
+    Network -> strings.errorNetwork
+    Sync -> strings.errorSync
+  }
 }

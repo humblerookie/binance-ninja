@@ -7,11 +7,11 @@ import dev.anvith.binanceninja.di.create
 
 class BinanceApplication : Application() {
 
-    val appComponent by
+  val appComponent by
     lazy(LazyThreadSafetyMode.NONE) { AppComponent::class.create(applicationContext) }
 
-    override fun onCreate() {
-        appComponent.initializers.forEach(Initializer::initialize)
-        super.onCreate()
-    }
+  override fun onCreate() {
+    appComponent.initializers.forEach(Initializer::initialize)
+    super.onCreate()
+  }
 }

@@ -6,13 +6,8 @@ import dev.anvith.binanceninja.domain.PeriodicScheduler
 import dev.anvith.binanceninja.domain.RequestExecutor
 import me.tatarka.inject.annotations.Provides
 
+abstract class SharedAppComponent :
+  DataStoreComponent, ApiComponent, LoggingComponent, SchedulerComponent, MiscComponent {
 
-abstract class SharedAppComponent : DataStoreComponent, ApiComponent, LoggingComponent,
-    SchedulerComponent, MiscComponent {
-
-
-
-    @Provides
-    @AppScope
-    fun PeriodicScheduler.requestExecutor(): RequestExecutor = this
+  @Provides @AppScope fun PeriodicScheduler.requestExecutor(): RequestExecutor = this
 }

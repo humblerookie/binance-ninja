@@ -1,6 +1,7 @@
 package dev.anvith.binanceninja.core.ui.data
 
-private  val currencySymbols = mapOf(
+private val currencySymbols =
+  mapOf(
     "USD" to "$",
     "EUR" to "€",
     "JPY" to "¥",
@@ -100,9 +101,8 @@ private  val currencySymbols = mapOf(
     "UGX" to "USh",
     "WST" to "WS$",
     "ZMW" to "ZK"
-)
+  )
 
 fun getCurrencySymbol(currency: String): String {
-    return currencySymbols[currency] ?: currency
+  return currencySymbols[currency] ?: currency
 }
-

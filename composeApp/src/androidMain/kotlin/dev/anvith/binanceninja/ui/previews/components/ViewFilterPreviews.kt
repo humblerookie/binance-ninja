@@ -9,19 +9,20 @@ import dev.anvith.binanceninja.features.ui.ViewFiltersScreen
 
 class ViewFilterPreviews {
 
-    @Preview
-    @Composable
-    fun  Preview1()  = PreviewBox{
-        val model = FilterModel(
-            id=1,
-            isBuy = true,
-            price = 95.6,
-            amount = 10000.0,
-            fromMerchant = true,
-            isProMerchant = true,
-            sourceCurrency = Constants.USDT,
-            targetCurrency = Constants.INR,
-        )
-        ViewFiltersScreen.FilterItem(item = model, onRemove = {})
-    }
+  @Preview
+  @Composable
+  fun Preview1() = PreviewBox {
+    val model =
+      FilterModel(
+        id = 1,
+        isBuy = true,
+        price = 95.6,
+        amount = 10000.0,
+        fromMerchant = true,
+        isProMerchant = true,
+        sourceCurrency = Constants.USDT,
+        targetCurrency = Constants.INR,
+      )
+    ViewFiltersScreen.FilterItem(item = model, onRemove = {})
+  }
 }

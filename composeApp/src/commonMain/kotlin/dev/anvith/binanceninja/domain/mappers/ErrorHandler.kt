@@ -9,12 +9,11 @@ import me.tatarka.inject.annotations.Inject
 @AppScope
 class ErrorHandler {
 
-    fun getMessage(throwable: Throwable):ErrorStrings{
-       return when(throwable){
-            is SocketTimeoutException-> ErrorStrings.Network
-            is Exception-> ErrorStrings.Generic
-            else-> ErrorStrings.Generic
-        }
+  fun getMessage(throwable: Throwable): ErrorStrings {
+    return when (throwable) {
+      is SocketTimeoutException -> ErrorStrings.Network
+      is Exception -> ErrorStrings.Generic
+      else -> ErrorStrings.Generic
     }
-
+  }
 }

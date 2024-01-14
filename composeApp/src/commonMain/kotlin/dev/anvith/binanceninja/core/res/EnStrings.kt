@@ -3,7 +3,8 @@ package dev.anvith.binanceninja.core.res
 import cafe.adriel.lyricist.LyricistStrings
 
 @LyricistStrings(languageTag = Locales.EN, default = true)
-val EnStrings = object : Strings {
+val EnStrings =
+  object : Strings {
     override val appName = "Binance Ninja"
     override val actionBuy = "Buy"
     override val actionSell = "Sell"
@@ -25,7 +26,7 @@ val EnStrings = object : Strings {
 
     override val errorCommon = "Something went wrong. Please try again."
     override val errorNetwork =
-        "Network request failed. Please check your connection and try again."
+      "Network request failed. Please check your connection and try again."
     override val selectCurrency = "Select a currency"
     override val actionRetry = "Retry"
     override val errorSync = "Failed to sync data. Please try again."
@@ -35,6 +36,5 @@ val EnStrings = object : Strings {
     override val errorNoFilters = "You currently have no filters added."
     override val filterCreationMessage = "Filter created successfully"
     override val permissionDeniedNotifications =
-        "Notification permission was denied, You may not receive order match notifications. Please enable them from app settings."
-
-}
+      "Notification permission was denied, You may not receive order match notifications. Please enable them from app settings."
+  }

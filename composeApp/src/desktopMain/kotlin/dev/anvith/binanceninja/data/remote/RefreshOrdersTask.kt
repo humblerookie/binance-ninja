@@ -17,41 +17,43 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class RefreshOrdersTask(
-    dispatcherProvider: DispatcherProvider,
+  dispatcherProvider: DispatcherProvider,
 ) : BackgroundTask {
-    private val scope =
-        CoroutineScope(SupervisorJob() + dispatcherProvider.io() + CoroutineExceptionHandler { _, exception ->
-            logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
-        })
-    private var scheduledExecutorService: ScheduledExecutorService? = null
-    private var future: ScheduledFuture<*>? = null
-
-    override fun schedule(executor: RequestExecutor) {
-        scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
-        val task = Runnable {
-            scope.launch {
-                var count = 0
-                var success = false
-                while (count <= Constants.RETRIES && !success) {
-                    success = executor.executeRequests()
-                    count++
-                }
-            }
+  private val scope =
+    CoroutineScope(
+      SupervisorJob() +
+        dispatcherProvider.io() +
+        CoroutineExceptionHandler { _, exception ->
+          logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
         }
+    )
+  private var scheduledExecutorService: ScheduledExecutorService? = null
+  private var future: ScheduledFuture<*>? = null
 
-        future = scheduledExecutorService!!.scheduleAtFixedRate(
-            task,
-            0,
-            Constants.INTERVAL_MINUTES,
-            TimeUnit.MINUTES
-        )
-
+  override fun schedule(executor: RequestExecutor) {
+    scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
+    val task = Runnable {
+      scope.launch {
+        var count = 0
+        var success = false
+        while (count <= Constants.RETRIES && !success) {
+          success = executor.executeRequests()
+          count++
+        }
+      }
     }
 
-    override fun cancel() {
-        future?.cancel(true)
-        scheduledExecutorService?.shutdown()
-    }
+    future =
+      scheduledExecutorService!!.scheduleAtFixedRate(
+        task,
+        0,
+        Constants.INTERVAL_MINUTES,
+        TimeUnit.MINUTES
+      )
+  }
 
-
+  override fun cancel() {
+    future?.cancel(true)
+    scheduledExecutorService?.shutdown()
+  }
 }

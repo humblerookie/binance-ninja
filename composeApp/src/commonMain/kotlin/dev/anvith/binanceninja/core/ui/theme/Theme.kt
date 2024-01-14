@@ -64,8 +64,8 @@ import dev.anvith.binanceninja.core.ui.theme.AppThemeColors.md_theme_light_surfa
 import dev.anvith.binanceninja.core.ui.theme.AppThemeColors.md_theme_light_tertiary
 import dev.anvith.binanceninja.core.ui.theme.AppThemeColors.md_theme_light_tertiaryContainer
 
-
-private val LightColors = lightColorScheme(
+private val LightColors =
+  lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -95,10 +95,10 @@ private val LightColors = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
-)
+  )
 
-
-private val DarkColors = darkColorScheme(
+private val DarkColors =
+  darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -128,21 +128,19 @@ private val DarkColors = darkColorScheme(
     surfaceTint = md_theme_dark_surfaceTint,
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
-)
+  )
 
 @Composable
 fun BinanceNinjaTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+  useDarkTheme: Boolean = isSystemInDarkTheme(),
+  content: @Composable() () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        LightColors
+  val colors =
+    if (!useDarkTheme) {
+      LightColors
     } else {
-        DarkColors
+      DarkColors
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
-    )
+  MaterialTheme(colorScheme = colors, content = content)
 }

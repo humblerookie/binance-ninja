@@ -10,11 +10,7 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface MiscComponent : TasksComponent {
 
-    @Provides
-    @IntoSet
-    fun PlatformScheduler.bind(): Initializer = this
+  @Provides @IntoSet fun PlatformScheduler.bind(): Initializer = this
 
-    @Provides
-    @AppScope
-    fun DefaultDispatcherProvider.bind(): DispatcherProvider = this
+  @Provides @AppScope fun DefaultDispatcherProvider.bind(): DispatcherProvider = this
 }

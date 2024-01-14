@@ -18,7 +18,7 @@ object AppText {
         modifier: Modifier = Modifier
     ) {
         TextModifier.size(Dimens.textXXXLarge)
-            .weight(FontWeight.Bold)
+            .weight(FontWeight.SemiBold)
             .lineHeight(Dimens.textXXXLarge)
             .copy(textModifier)
             .applyToText(text = text, modifier = modifier)
@@ -31,7 +31,7 @@ object AppText {
         modifier: Modifier = Modifier
     ) {
         TextModifier.size(Dimens.textXXLarge)
-            .weight(FontWeight.Bold)
+            .weight(FontWeight.SemiBold)
             .copy(textModifier)
             .applyToText(text = text, modifier = modifier)
     }

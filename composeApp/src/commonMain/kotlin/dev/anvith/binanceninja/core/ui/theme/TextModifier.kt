@@ -9,6 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
 
@@ -99,7 +100,13 @@ interface TextModifier {
             throw IllegalStateException();
         }
 
+        override fun textAlign(textAlign: TextAlign): TextModifier {
+            return TextModifierImpl().textAlign(textAlign)
+        }
+
     }
+
+    fun textAlign(textAlign: TextAlign): TextModifier
 }
 
 
@@ -118,6 +125,8 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
     var letterSpacing: TextUnit? = (textModifier as? TextModifierImpl)?.letterSpacing
         private set
 
+    var textAlign: TextAlign? = (textModifier as? TextModifierImpl)?.textAlign
+        private set
     override fun font(font: FontFamily): TextModifier {
         this.font = font
         return this
@@ -132,6 +141,11 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
         this.color = color
         return this
     }
+    override fun textAlign(textAlign: TextAlign): TextModifier {
+        this.textAlign = textAlign
+        return this
+    }
+
 
     override fun lineHeight(height: TextUnit): TextModifier {
         this.lineHeight = height
@@ -172,6 +186,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
             fontFamily = font ?: getFontFamily(),
             fontWeight = weight ?: FontWeight.Normal,
             letterSpacing = letterSpacing ?: TextUnit.Unspecified,
+            textAlign = textAlign ?: TextAlign.Start,
             modifier = modifier
         )
     }

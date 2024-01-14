@@ -1,8 +1,5 @@
 package dev.anvith.binanceninja.core.res
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
-
 interface Strings {
 
 
@@ -23,9 +20,7 @@ interface Strings {
     val miscOptions: List<String>
     val labelMerchant: String
     val labelProMerchant: String
-    val priceDynamicsLabel: (currency: String, price: Double, labelColor: Color) -> AnnotatedString
     val labelRemove: String
-    val actionDynamicsLabel: (currency: String, srcCurrency:String, isBuy: Boolean, amount: Double, labelColor: Color) -> AnnotatedString
     val errorMinMaxEmpty: String
     val errorAmountEmpty: String
     val errorNoFilters: String
@@ -36,4 +31,5 @@ interface Strings {
     val selectCurrency: String
     val actionRetry: String
     val permissionDeniedNotifications: String
+    val labelAmount: String
 }

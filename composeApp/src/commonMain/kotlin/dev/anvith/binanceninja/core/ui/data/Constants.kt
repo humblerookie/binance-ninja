@@ -14,5 +14,7 @@ object Constants {
     object Assets {
 
         const val EMPTY = "empty-asset.xml"
+        const val BUY = "ic-buy.xml"
+        const val SELL = "ic-sell.xml"
     }
 }

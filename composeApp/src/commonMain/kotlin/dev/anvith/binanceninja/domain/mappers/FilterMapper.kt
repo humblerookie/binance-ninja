@@ -53,8 +53,6 @@ class FilterMapper {
     }
 
     fun toNotification(item: FilterModel, count: Int, currencies: Map<String, CurrencyModel>): NotificationModel {
-        println(currencies)
-        println(item)
         return NotificationModel(
             title = "$count Order${if (count > 1) "s" else ""} Matched",
             message = item.run {

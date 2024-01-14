@@ -42,9 +42,12 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.anvith.binanceninja.core.ui.components.Space
 import dev.anvith.binanceninja.core.ui.data.Constants.Assets
 import dev.anvith.binanceninja.core.ui.data.IList
+import dev.anvith.binanceninja.core.ui.data.formatPrecision
+import dev.anvith.binanceninja.core.ui.data.getCurrencySymbol
 import dev.anvith.binanceninja.core.ui.presentation.PresenterTab
 import dev.anvith.binanceninja.core.ui.presentation.getPresenter
 import dev.anvith.binanceninja.core.ui.theme.AppText
+import dev.anvith.binanceninja.core.ui.theme.AppThemeColors
 import dev.anvith.binanceninja.core.ui.theme.Dimens
 import dev.anvith.binanceninja.core.ui.theme.TextModifier
 import dev.anvith.binanceninja.core.ui.theme.ThemeColors
@@ -90,9 +93,9 @@ object ViewFiltersScreen: PresenterTab() {
             }
 
             else -> {
-                Filters(state.filters,{
+                Filters(state.filters) {
                     presenter.dispatchEvent(RemoveFilter(it))
-                })
+                }
             }
         }
 
@@ -129,13 +132,13 @@ object ViewFiltersScreen: PresenterTab() {
     }
 
     @Composable
-    private fun Filters(filters: IList<FilterModel>, onRemove:(FilterModel)->Unit) {
+    private fun Filters(filters: IList<FilterModel>, onRemove: (FilterModel) -> Unit) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.keyline)) {
             item {
                 Space(Dimens.keyline)
             }
             items(filters) { filter ->
-                FilterItem(filter,onRemove)
+                FilterItem(filter, onRemove)
             }
             item {
                 Space(Dimens.keyline)
@@ -144,6 +147,7 @@ object ViewFiltersScreen: PresenterTab() {
     }
 
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     fun FilterItem(item: FilterModel, onRemove: (FilterModel) -> Unit) {
         Card(
@@ -159,26 +163,60 @@ object ViewFiltersScreen: PresenterTab() {
                 Column(
                     modifier = Modifier.padding(Dimens.keyline).weight(1f),
                 ) {
-                    AppText.Body1(
-                        text = strings.actionDynamicsLabel(
-                            item.sourceCurrency,
-                            item.targetCurrency,
-                            item.isBuy,
-                            item.amount,
-                            ThemeColors.onSurface.alpha38()
-                        ),
-                    )
-                    Space(height = Dimens.spaceTiny)
-                    AppText.Body1(
-                        text = strings.priceDynamicsLabel(
-                            item.targetCurrency,
-                            item.price,
-                            ThemeColors.onSurface.alpha38()
+                    val symbol = getCurrencySymbol(item.targetCurrency)
+                    Row {
+                        val (icon, color) = if (item.isBuy) {
+                            Assets.BUY to AppThemeColors.onColor
+                        } else {
+                            Assets.SELL to AppThemeColors.offColor
+                        }
+
+                        Image(
+                            painterResource(icon),
+                            null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.size(Dimens.iconSmall).align(Alignment.Bottom),
+                            colorFilter = ColorFilter.tint(color)
                         )
-                    )
+                        Space(width = Dimens.spaceSmall, modifier = Modifier)
+                        AppText.H2(
+                            text = item.sourceCurrency,
+                            modifier = Modifier.weight(1f).align(Alignment.Bottom),
+                        )
+                    }
+                    Space(height = Dimens.spaceSmall, modifier = Modifier)
+
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Bottom).weight(1f),
+                        ) {
+                            AppText.Body1(
+                                text = strings.labelPrice,
+                                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38()),
+                            )
+                            AppText.H3(
+                                text = symbol + formatPrecision(item.price),
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.align(Alignment.Bottom).weight(1f),
+                        ) {
+                            AppText.Body1(
+                                text = strings.labelAmount,
+                                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38())
+                            )
+                            AppText.H3(
+                                text = symbol + formatPrecision(item.amount) + "0",
+                            )
+                        }
+                    }
+
                     if (item.isProMerchant || item.fromMerchant) {
                         Space(height = Dimens.spaceNormal)
-                        Row {
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             if (item.fromMerchant) {
                                 Label(strings.labelMerchant, Icons.Filled.CheckCircle)
                                 Space(width = Dimens.spaceNormal)
@@ -201,7 +239,7 @@ object ViewFiltersScreen: PresenterTab() {
     private fun RowScope.DeleteButton(modifier: Modifier = Modifier, onRemove: () -> Unit) {
         IconButton(
             onClick = onRemove,
-            modifier = modifier.size(Dimens.iconSmall).background(
+            modifier = modifier.size(Dimens.iconTiny).background(
                 color = ThemeColors.secondary,
                 shape = RoundedCornerShape(
                     topEnd = Dimens.radiusButton,
@@ -226,7 +264,7 @@ object ViewFiltersScreen: PresenterTab() {
                 width = Dimens.borderSmall,
                 color = contentColor,
                 shape = RoundedCornerShape(Dimens.radiusHuge)
-            ).padding(horizontal = Dimens.spaceNormal, vertical = Dimens.spaceXSmall),
+            ).padding(horizontal = Dimens.spaceSmall, vertical = Dimens.spaceXSmall),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -236,7 +274,7 @@ object ViewFiltersScreen: PresenterTab() {
                 tint = contentColor,
             )
             Space(width = Dimens.spaceTiny)
-            AppText.Button1(
+            AppText.Subtitle(
                 label,
                 textModifier = TextModifier.color(contentColor)
             )

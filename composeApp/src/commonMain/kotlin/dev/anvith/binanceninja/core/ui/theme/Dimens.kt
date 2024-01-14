@@ -31,7 +31,8 @@ object Dimens {
     val elevation_normal = 4.dp
     val elevation_large = 8.dp
 
-    val iconSmall =28.dp
+    val iconTiny =28.dp
+    val iconSmall =32.dp
     val iconNormal =64.dp
 
     val borderNormal = 4.dp

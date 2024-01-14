@@ -69,7 +69,4 @@ object AppThemeColors {
     val onColor= Color(0xFF22bf66)
     val offColor= Color(0xFFe33044)
 
-    val variant1= Color(0xAAFFC857)
-    val variant2= Color(0xFFC8553D)
-    val onVariant = Color(0xEE000000)
 }

@@ -58,6 +58,7 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.bundles.workmanager)
+            implementation(libs.androidx.splashscreen)
         }
 
         desktopMain.dependencies {

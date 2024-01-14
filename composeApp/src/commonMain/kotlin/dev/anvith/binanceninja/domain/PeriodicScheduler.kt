@@ -68,7 +68,8 @@ class PeriodicScheduler(
             }
             executeJobs(downloadJobs, completedJobs)
             requestScope.cancel()
-            val matchedOrders = completedJobs.filter {(_,res)-> res.isSuccess  && res.getOrThrow().isNotEmpty()}
+            val matchedOrders =
+                completedJobs.filter { (_, res) -> res.isSuccess && res.getOrThrow().isNotEmpty() }
             if (matchedOrders.isNotEmpty()) {
                 notificationService.notify(matchedOrders.map { it.first to it.second.getOrThrow().size }
                     .map {
@@ -79,7 +80,7 @@ class PeriodicScheduler(
                         )
                     })
             }
-            return matchedOrders.size == filters.size
+            return completedJobs.filter { it.second.isSuccess }.size == filters.size
         } else {
             return true
         }

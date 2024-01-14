@@ -437,7 +437,7 @@ object CreateFilterScreen : PresenterTab() {
         onCreateFilter: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        AppText.H5(text = strings.selectAmount(symbol))
+        AppText.H5(text = strings.selectAmount)
         Row {
             Card(
                 modifier = modifier.weight(1f).padding(vertical = Dimens.keyline)
@@ -454,6 +454,9 @@ object CreateFilterScreen : PresenterTab() {
                         onCreateFilter()
                     }),
                     modifier = Modifier.padding(horizontal = Dimens.keyline, vertical = Dimens.spaceTiny).padding(top = Dimens.keyline).fillMaxWidth(),
+                    prefix = {
+                        AppText.Button1(text = symbol.orEmpty())
+                    },
                     supportingText = {
                         if (hasError) {
                             AppText.Body1(

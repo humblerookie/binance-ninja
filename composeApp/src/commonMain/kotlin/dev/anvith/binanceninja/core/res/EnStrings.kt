@@ -22,13 +22,12 @@ val EnStrings = object : Strings {
     override val actionCreateFilter = "Create Filter"
     override val labelGreaterThan = "When price is at least:"
     override val labelLessThan = "When price is less than:"
-    override val selectAmount =
-        { currency: String? -> "Select the amount ${currency?.let { "(in $it)" } ?: ""}:" }
+    override val selectAmount = "Select the amount:"
     override val selectPrice = "Enter the price"
     override val miscRequirements = "Miscellaneous: "
     override val miscOptions = listOf("Is Merchant", "Is Pro Merchant")
     override val labelMerchant = "Merchant"
-    override val labelRestricted = "Restricted"
+    override val labelProMerchant = "Pro Merchant"
     override val priceDynamicsLabel =
         { currency: String, price: Double,  labelColor: Color ->
             buildAnnotatedString {

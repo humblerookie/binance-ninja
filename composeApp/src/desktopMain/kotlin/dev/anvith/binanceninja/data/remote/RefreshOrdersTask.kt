@@ -32,16 +32,7 @@ class RefreshOrdersTask(
 
   override fun schedule(executor: RequestExecutor) {
     scheduledExecutorService = Executors.newScheduledThreadPool(Constants.PARALLELISM)
-    val task = Runnable {
-      scope.launch {
-        var count = 0
-        var success = false
-        while (count <= Constants.RETRIES && !success) {
-          success = executor.executeRequests()
-          count++
-        }
-      }
-    }
+    val task = Runnable { scope.launch { executor.executeRequests() } }
 
     future =
       scheduledExecutorService!!.scheduleAtFixedRate(

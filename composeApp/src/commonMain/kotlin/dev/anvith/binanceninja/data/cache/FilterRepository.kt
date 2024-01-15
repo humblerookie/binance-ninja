@@ -2,6 +2,7 @@ package dev.anvith.binanceninja.data.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
+import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.data.remote.PeerToPeerApi
 import dev.anvith.binanceninja.data.remote.models.ApiResult.Failure
 import dev.anvith.binanceninja.data.remote.models.ApiResult.Success
@@ -73,8 +74,13 @@ class FilterRepository(
                 orders.filter { it.price >= filter.price }
               }
               .filter { !currentOrders.containsKey(it.id) }
-          ordersQueries.transaction { filteredOrders.forEach { ordersQueries.saveOrder(it.id) } }
-          Result.success(filteredOrders)
+          try {
+            ordersQueries.transaction { filteredOrders.forEach { ordersQueries.saveOrder(it.id) } }
+            Result.success(filteredOrders)
+          } catch (e: Exception) {
+            logE("Error saving orders ${e.message}")
+            Result.failure(e)
+          }
         }
         else -> {
           Result.failure((response as Failure).throwable)

@@ -61,15 +61,9 @@ class RefreshOrdersTask(
       val scope = getScope()
       task?.expirationHandler = { scope.cancel() }
       scheduleRequest()
-
       scope.launch {
-        var count = 0
-        var success = false
-        while (count <= Constants.RETRIES && !success) {
-          success = executor?.executeRequests() ?: false
-          count++
-        }
-        task?.setTaskCompletedWithSuccess(success)
+        val isSuccess = executor?.executeRequests() ?: false
+        task?.setTaskCompletedWithSuccess(isSuccess)
       }
     }
 

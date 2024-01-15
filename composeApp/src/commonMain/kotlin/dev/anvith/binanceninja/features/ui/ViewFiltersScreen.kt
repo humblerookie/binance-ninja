@@ -42,8 +42,8 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.anvith.binanceninja.core.ui.components.Space
 import dev.anvith.binanceninja.core.ui.data.Constants.Assets
 import dev.anvith.binanceninja.core.ui.data.IList
+import dev.anvith.binanceninja.core.ui.data.IMap
 import dev.anvith.binanceninja.core.ui.data.formatPrecision
-import dev.anvith.binanceninja.core.ui.data.getCurrencySymbol
 import dev.anvith.binanceninja.core.ui.presentation.PresenterTab
 import dev.anvith.binanceninja.core.ui.presentation.getPresenter
 import dev.anvith.binanceninja.core.ui.theme.AppText
@@ -83,7 +83,7 @@ object ViewFiltersScreen : PresenterTab() {
         MessageSection(strings.errorNoFilters)
       }
       else -> {
-        Filters(state.filters) { presenter.dispatchEvent(RemoveFilter(it)) }
+        Filters(state.filters, state.currencySymbols) { presenter.dispatchEvent(RemoveFilter(it)) }
       }
     }
   }
@@ -118,17 +118,25 @@ object ViewFiltersScreen : PresenterTab() {
   }
 
   @Composable
-  private fun Filters(filters: IList<FilterModel>, onRemove: (FilterModel) -> Unit) {
+  private fun Filters(
+    filters: IList<FilterModel>,
+    currencies: IMap<String, String>,
+    onRemove: (FilterModel) -> Unit
+  ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.keyline)) {
       item { Space(Dimens.keyline) }
-      items(filters) { filter -> FilterItem(filter, onRemove) }
+      items(filters) { filter -> FilterItem(filter, currencies, onRemove) }
       item { Space(Dimens.keyline) }
     }
   }
 
   @OptIn(ExperimentalResourceApi::class)
   @Composable
-  fun FilterItem(item: FilterModel, onRemove: (FilterModel) -> Unit) {
+  fun FilterItem(
+    item: FilterModel,
+    currencies: IMap<String, String>,
+    onRemove: (FilterModel) -> Unit
+  ) {
     Card(Modifier.padding(horizontal = Dimens.keyline)) {
       Row(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.listBlockNormal),
@@ -137,7 +145,7 @@ object ViewFiltersScreen : PresenterTab() {
         Column(
           modifier = Modifier.padding(Dimens.keyline).weight(1f),
         ) {
-          val symbol = getCurrencySymbol(item.targetCurrency)
+          val symbol = currencies[item.targetCurrency] ?: item.targetCurrency
           Row {
             val (icon, color) =
               if (item.isBuy) {

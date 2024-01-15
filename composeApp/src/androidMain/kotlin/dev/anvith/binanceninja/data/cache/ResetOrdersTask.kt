@@ -3,9 +3,9 @@ package dev.anvith.binanceninja.data.cache
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import dev.anvith.binanceninja.BinanceApplication
 import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.core.ui.data.Constants
+import dev.anvith.binanceninja.di.AppComponentProvider
 
 class ResetOrdersTask(
   appContext: Context,
@@ -13,7 +13,7 @@ class ResetOrdersTask(
 ) : CoroutineWorker(appContext, params) {
 
   private val filterRepository
-    get() = (applicationContext as BinanceApplication).appComponent.filterRepository
+    get() = (applicationContext as AppComponentProvider).appComponent.filterRepository
 
   override suspend fun doWork(): Result {
     if (runAttemptCount > Constants.RETRIES) {

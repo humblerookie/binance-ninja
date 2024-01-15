@@ -16,4 +16,5 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 composeApp/local.properties
-composeApp/release/*
+release/*
+/secrets.properties

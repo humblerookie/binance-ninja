@@ -7,11 +7,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import dev.anvith.binanceninja.MainActivity
 import dev.anvith.binanceninja.R
+import dev.anvith.binanceninja.core.ui.data.Constants
 import dev.anvith.binanceninja.data.cache.UserDataStore
 import dev.anvith.binanceninja.domain.models.NotificationModel
 import dev.anvith.binanceninja.features.ui.core.PermissionHandler
@@ -25,6 +26,7 @@ actual class NotificationService(
   private val userDataStore: UserDataStore,
   private val permissionHandler: PermissionHandler
 ) {
+
   private val channelId = "MATCH_ORDERS"
 
   @SuppressLint("MissingPermission")
@@ -45,7 +47,8 @@ actual class NotificationService(
 
   private fun createNotification(items: List<NotificationModel>): List<Notification> {
     val intent =
-      Intent(context, MainActivity::class.java).apply {
+      Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(Constants.APP_SCHEME)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
       }
 

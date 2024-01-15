@@ -3,15 +3,16 @@ package dev.anvith.binanceninja
 import android.app.Application
 import dev.anvith.binanceninja.core.Initializer
 import dev.anvith.binanceninja.di.AppComponent
+import dev.anvith.binanceninja.di.AppComponentProvider
 import dev.anvith.binanceninja.di.create
 
-class BinanceApplication : Application() {
+class BinanceApplication : Application(), AppComponentProvider {
 
-  val appComponent by
+    override val appComponent by
     lazy(LazyThreadSafetyMode.NONE) { AppComponent::class.create(applicationContext) }
 
-  override fun onCreate() {
-    appComponent.initializers.forEach(Initializer::initialize)
-    super.onCreate()
-  }
+    override fun onCreate() {
+        appComponent.initializers.forEach(Initializer::initialize)
+        super.onCreate()
+    }
 }

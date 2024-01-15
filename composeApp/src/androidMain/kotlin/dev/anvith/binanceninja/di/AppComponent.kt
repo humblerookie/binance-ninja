@@ -11,7 +11,9 @@ import me.tatarka.inject.annotations.Provides
 
 @Component
 @AppScope
-abstract class AppComponent(@get:Provides val context: Context) : SharedAppComponent() {
+abstract class AppComponent(
+  @get:Provides val context: Context,
+) : SharedAppComponent() {
   abstract val filterRepository: FilterRepository
   abstract val currencyRepository: CurrencyRepository
   abstract val requestExecutor: RequestExecutor

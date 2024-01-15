@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "18088925127",
+    "project_id": "binance-ninja",
+    "storage_bucket": "binance-ninja.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18088925127:android:16e5066b814d6ca8a1abe2",
+        "android_client_info": {
+          "package_name": "dev.anvith.binanceninja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDYc_YYu5ylu8QET-7xd_1uTii23ujb9k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18088925127:android:1840b459752ef7d4a1abe2",
+        "android_client_info": {
+          "package_name": "dev.anvith.binanceninja.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDYc_YYu5ylu8QET-7xd_1uTii23ujb9k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

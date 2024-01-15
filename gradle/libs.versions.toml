@@ -34,6 +34,9 @@ ktlint="12.1.0"
 spotless="6.23.3"
 ktfmt = "0.44"
 buildKonfig="0.15.1"
+firebase ="18.6.0"
+crashlyticsPlugin="2.9.9"
+gms="4.4.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -84,6 +87,7 @@ napier= { module = "io.github.aakira:napier", version.ref = "napier" }
 workmanager-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
 workmanager-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 notify-desktop = { module = "com.dorkbox:Notify", version.ref = "notify" }
+firebase-crashlytics = {module="com.google.firebase:firebase-crashlytics", version.ref="firebase"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -97,6 +101,8 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 ktlint= { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
+crashlytics ={ id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
+google-gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 
 [bundles]
 compose = [ "compose-runtime", "compose-foundation", "compose-ui",  "compose-material3", "compose-resources"]

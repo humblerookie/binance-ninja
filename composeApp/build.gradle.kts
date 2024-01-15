@@ -5,11 +5,11 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply(from = "environment.gradle.kts")
+apply(from = "../scripts/environment.gradle.kts")
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidApplication)
+  alias(libs.plugins.androidLibrary)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
@@ -20,7 +20,7 @@ plugins {
 }
 
 @Suppress("UNCHECKED_CAST") val getEnv = extra["getEnv"] as (String) -> String
-val bundleId = "dev.anvith.binanceninja"
+val bundleId = extra["bundleId"] as String
 
 kotlin {
   androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
@@ -47,7 +47,6 @@ kotlin {
       implementation(libs.sqldelight.android.driver)
       implementation(libs.ktor.client.okhttp)
       implementation(libs.bundles.workmanager)
-      implementation(libs.androidx.splashscreen)
     }
 
     desktopMain.dependencies {
@@ -107,43 +106,16 @@ android {
   namespace = bundleId
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   sourceSets["main"].res.srcDirs("src/androidMain/res")
   sourceSets["main"].res.srcDirs("src/commonMain/resources")
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
-    applicationId = bundleId
     minSdk = libs.versions.android.minSdk.get().toInt()
-    targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = getEnv("VERSION_CODE").toInt()
-    versionName = getEnv("VERSION")
   }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-  signingConfigs {
-    create("release") {
-      storeFile = file("$rootDir/release/release.jks")
-      storePassword = getEnv("KEYSTORE_PASSWORD")
-      keyAlias = "ninja"
-      keyPassword = getEnv("KEYSTORE_PASSWORD")
-    }
-  }
-  buildTypes {
-    release {
-      isMinifyEnabled = true
-      isShrinkResources = true
-      signingConfig = signingConfigs.getByName("release")
-
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
-    debug { applicationIdSuffix = ".debug" }
-  }
   buildFeatures { compose = true }
   composeOptions { kotlinCompilerExtensionVersion = "1.5.6" }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
 }
 
 compose.desktop {

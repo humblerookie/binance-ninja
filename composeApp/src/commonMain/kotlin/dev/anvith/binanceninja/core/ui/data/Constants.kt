@@ -11,6 +11,7 @@ object Constants {
   const val INTERVAL_MINUTES = 15L
   const val INTERVAL_DAYS = 1L
   const val RATE_LIMIT_DELAY = 150L
+  const val APP_SCHEME = "binanceninja://"
 
   object Assets {
 

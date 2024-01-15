@@ -3,7 +3,9 @@ package dev.anvith.binanceninja.domain
 import dev.anvith.binanceninja.core.Initializer
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.logE
+import dev.anvith.binanceninja.core.ui.data.Constants
 import dev.anvith.binanceninja.core.ui.data.Constants.PARALLELISM
+import dev.anvith.binanceninja.core.ui.data.Constants.RATE_LIMIT_DELAY
 import dev.anvith.binanceninja.data.NotificationService
 import dev.anvith.binanceninja.data.cache.CurrencyRepository
 import dev.anvith.binanceninja.data.cache.FilterRepository
@@ -17,6 +19,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -56,13 +59,27 @@ class PeriodicScheduler(
   }
 
   override suspend fun executeRequests(): Boolean {
+    var currentFilters = filters
+    var retryCount = 0
+    while (++retryCount <= Constants.RETRIES) {
+      currentFilters = refreshOrders(currentFilters)
+    }
+    return currentFilters.isEmpty()
+  }
+
+  private suspend fun refreshOrders(filters: List<FilterModel>): List<FilterModel> {
     if (filters.isNotEmpty()) {
       val requestScope = CoroutineScope(dispatcherProvider.io() + SupervisorJob())
       val downloadJobs = mutableListOf<Pair<FilterModel, Deferred<Result<Orders>>>>()
       val completedJobs = mutableListOf<Pair<FilterModel, Result<Orders>>>()
       val currencies = currencyRepository.getFiatCurrenciesOrEmpty().associateBy { it.code }
-      filters.forEach { first ->
-        val res = requestScope.async { filterRepository.getOrders(first) }
+      filters.forEachIndexed { index, first ->
+        val res =
+          requestScope.async {
+            // Delay to ensure we don't hit api limit
+            delay(index * RATE_LIMIT_DELAY)
+            filterRepository.getOrders(first)
+          }
         downloadJobs.add(Pair(first, res))
         if (downloadJobs.size >= PARALLELISM) {
           executeJobs(downloadJobs, completedJobs)
@@ -79,9 +96,9 @@ class PeriodicScheduler(
             .map { mapper.toNotification(it.first, it.second, currencies) }
         )
       }
-      return completedJobs.filter { it.second.isSuccess }.size == filters.size
+      return completedJobs.filter { it.second.isFailure }.map { it.first }
     } else {
-      return true
+      return emptyList()
     }
   }
 

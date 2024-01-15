@@ -10,6 +10,7 @@ object Constants {
   const val PARALLELISM = 2
   const val INTERVAL_MINUTES = 15L
   const val INTERVAL_DAYS = 1L
+  const val RATE_LIMIT_DELAY = 150L
 
   object Assets {
 

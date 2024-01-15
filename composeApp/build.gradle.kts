@@ -1,7 +1,11 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+apply(from = "environment.gradle.kts")
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -12,45 +16,11 @@ plugins {
   alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.ktlint)
   alias(libs.plugins.spotless)
+  alias(libs.plugins.buildKonfig)
 }
 
-allprojects {
-  apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
-  configure<SpotlessExtension> {
-    kotlin {
-      ktfmt(libs.versions.ktfmt.get()).googleStyle()
-      target("src/**/*.kt")
-      targetExclude("${layout.buildDirectory}/**/*.kt")
-    }
-    kotlinGradle {
-      ktfmt(libs.versions.ktfmt.get()).googleStyle()
-      target("*.kts")
-      targetExclude("${layout.buildDirectory}/**/*.kts")
-      toggleOffOn()
-    }
-    format("xml") {
-      target("src/**/*.xml")
-      targetExclude("**/build/", ".idea/")
-      trimTrailingWhitespace()
-      endWithNewline()
-    }
-  }
-
-  tasks.withType<KotlinCompile>().all {
-    kotlinOptions { freeCompilerArgs += "-Xexpect-actual-classes" }
-  }
-}
-
-sqldelight {
-  databases {
-    create("NinjaDatabase") {
-      packageName.set("dev.anvith.binanceninja.data.cache")
-      dialect(libs.sqldelight.sqlite.dialect)
-      schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
-      verifyMigrations.set(true)
-    }
-  }
-}
+@Suppress("UNCHECKED_CAST") val getEnv = extra["getEnv"] as (String) -> String
+val bundleId = "dev.anvith.binanceninja"
 
 kotlin {
   androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
@@ -134,7 +104,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
 }
 
 android {
-  namespace = "dev.anvith.binanceninja"
+  namespace = bundleId
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -143,14 +113,31 @@ android {
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
-    applicationId = "dev.anvith.binanceninja"
+    applicationId = bundleId
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = getEnv("VERSION_CODE").toInt()
+    versionName = getEnv("VERSION")
   }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
+  signingConfigs {
+    create("release") {
+      storeFile = file("$rootDir/release/release.jks")
+      storePassword = getEnv("KEYSTORE_PASSWORD")
+      keyAlias = "ninja"
+      keyPassword = getEnv("KEYSTORE_PASSWORD")
+    }
+  }
+  buildTypes {
+    release {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      signingConfig = signingConfigs.getByName("release")
+
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+    debug { applicationIdSuffix = ".debug" }
+  }
   buildFeatures { compose = true }
   composeOptions { kotlinCompilerExtensionVersion = "1.5.6" }
   compileOptions {
@@ -165,13 +152,59 @@ compose.desktop {
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "dev.anvith.binanceninja"
-      packageVersion = "1.0.0"
+      packageName = bundleId
+      packageVersion = getEnv("DESKTOP_VERSION")
     }
+  }
+}
+
+sqldelight {
+  databases {
+    create("NinjaDatabase") {
+      packageName.set("$bundleId.data.cache")
+      dialect(libs.sqldelight.sqlite.dialect)
+      schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
+      verifyMigrations.set(true)
+    }
+  }
+}
+
+allprojects {
+  apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
+  configure<SpotlessExtension> {
+    kotlin {
+      ktfmt(libs.versions.ktfmt.get()).googleStyle()
+      target("src/**/*.kt")
+      targetExclude("${layout.buildDirectory}/**/*.kt")
+    }
+    kotlinGradle {
+      ktfmt(libs.versions.ktfmt.get()).googleStyle()
+      target("*.kts")
+      targetExclude("${layout.buildDirectory}/**/*.kts")
+      toggleOffOn()
+    }
+    format("xml") {
+      target("src/**/*.xml")
+      targetExclude("**/build/", ".idea/")
+      trimTrailingWhitespace()
+      endWithNewline()
+    }
+  }
+
+  tasks.withType<KotlinCompile>().all {
+    kotlinOptions { freeCompilerArgs += "-Xexpect-actual-classes" }
   }
 }
 
 ktlint {
   verbose.set(true)
   outputToConsole.set(true)
+}
+
+buildkonfig {
+  packageName = bundleId
+  defaultConfigs {
+    buildConfigField(BOOLEAN, "IS_DEBUG", getEnv("IS_DEBUG"))
+    buildConfigField(STRING, "VERSION", getEnv("VERSION"))
+  }
 }

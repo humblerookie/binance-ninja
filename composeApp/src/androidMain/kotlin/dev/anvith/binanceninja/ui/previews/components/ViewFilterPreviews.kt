@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import dev.anvith.binanceninja.core.ui.components.PreviewBox
 import dev.anvith.binanceninja.core.ui.data.Constants
+import dev.anvith.binanceninja.core.ui.data.emptyIMap
 import dev.anvith.binanceninja.domain.models.FilterModel
 import dev.anvith.binanceninja.features.ui.ViewFiltersScreen
 
@@ -23,6 +24,6 @@ class ViewFilterPreviews {
         sourceCurrency = Constants.USDT,
         targetCurrency = Constants.INR,
       )
-    ViewFiltersScreen.FilterItem(item = model, onRemove = {})
+    ViewFiltersScreen.FilterItem(item = model, currencies = emptyIMap()) {}
   }
 }

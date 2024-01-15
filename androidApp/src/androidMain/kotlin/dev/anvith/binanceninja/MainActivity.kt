@@ -22,7 +22,6 @@ class MainActivity : ComponentActivity() {
     permissionHandler = activityComponent.permissionHandler
     permissionHandler.updateActivity(this)
     setContent { activityComponent.app() }
-    onRetainNonConfigurationInstance()
   }
 
   @Deprecated("Deprecated in Java")

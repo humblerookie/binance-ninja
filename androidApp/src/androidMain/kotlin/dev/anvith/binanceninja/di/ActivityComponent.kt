@@ -9,10 +9,11 @@ import me.tatarka.inject.annotations.Provides
 @Component
 @ActivityScope
 abstract class ActivityComponent(
-  @get:Provides val activity: ComponentActivity,
-  @Component val appComponent: AppComponent
+    @get:Provides val activity: ComponentActivity,
+    @Component val appComponent: AppComponent
 ) {
-  abstract val app: App
+    abstract val app: App
 
-  abstract val permissionHandler: PermissionHandler
+
+    abstract val permissionHandler: PermissionHandler
 }

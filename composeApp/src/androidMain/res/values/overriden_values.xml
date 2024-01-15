@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <drawable name="ic_notification"/>
+    <string name="match_notification_title" />
+    <string name="match_notification_description" />
+
+</resources>

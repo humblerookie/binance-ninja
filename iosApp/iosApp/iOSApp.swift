@@ -1,5 +1,6 @@
 import SwiftUI
 import ComposeApp
+import Firebase
 
 @main
 struct iOSApp: App {
@@ -26,6 +27,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       uiViewControllerProvider: { UIApplication.topViewController()! }
     )
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
         applicationComponent.initializers
                     .compactMap { ($0 as! any Initializer) }
                     .forEach { initializer in

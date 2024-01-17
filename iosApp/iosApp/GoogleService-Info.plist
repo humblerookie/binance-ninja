@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBkFEAbbPZX2itUsxfbSj8_PCqQpJc01Mo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>18088925127</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>dev.anvith.binanceninja</string>
+	<key>PROJECT_ID</key>
+	<string>binance-ninja</string>
+	<key>STORAGE_BUCKET</key>
+	<string>binance-ninja.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:18088925127:ios:7e58c2a0d68cae92a1abe2</string>
+</dict>
+</plist>

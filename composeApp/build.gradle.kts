@@ -69,6 +69,7 @@ kotlin {
         implementation(libs.kotlinx.serialization)
         api(libs.napier)
         implementation(libs.bundles.settings)
+        implementation(libs.sentry)
       }
       kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     }
@@ -110,9 +111,7 @@ android {
   sourceSets["main"].res.srcDirs("src/commonMain/resources")
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
-  defaultConfig {
-    minSdk = libs.versions.android.minSdk.get().toInt()
-  }
+  defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
   buildFeatures { compose = true }
   composeOptions { kotlinCompilerExtensionVersion = "1.5.6" }
@@ -178,5 +177,9 @@ buildkonfig {
   defaultConfigs {
     buildConfigField(BOOLEAN, "IS_DEBUG", getEnv("IS_DEBUG"))
     buildConfigField(STRING, "VERSION", getEnv("VERSION"))
+    buildConfigField(STRING, "SENTRY_DSN", getEnv("SENTRY_DSN"))
+    buildConfigField(STRING, "SENTRY_ORG", getEnv("SENTRY_ORG"))
+    buildConfigField(STRING, "SENTRY_PROJECT", getEnv("SENTRY_PROJECT"))
+    buildConfigField(STRING, "SENTRY_ENVIRONMENT", getEnv("SENTRY_ENVIRONMENT"))
   }
 }

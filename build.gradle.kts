@@ -9,7 +9,4 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.ktlint) apply false
-    alias(libs.plugins.crashlytics) apply false
-    alias(libs.plugins.google.gms) apply false
-
 }

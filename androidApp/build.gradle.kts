@@ -5,8 +5,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.crashlytics)
-    alias(libs.plugins.google.gms)
+    alias(libs.plugins.sentry)
 }
 @Suppress("UNCHECKED_CAST")
 val getEnv = extra["getEnv"] as (String) -> String
@@ -15,6 +14,11 @@ val bundleId = extra["bundleId"] as String
 kotlin {
     jvm()
     androidTarget()
+}
+sentry {
+    autoInstallation {
+        enabled.set(false)
+    }
 }
 android {
     namespace = bundleId
@@ -66,7 +70,6 @@ dependencies {
     testImplementation(libs.junit)
     implementation(libs.inject.runtime)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.firebase.crashlytics)
     ksp(libs.inject.processor)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)

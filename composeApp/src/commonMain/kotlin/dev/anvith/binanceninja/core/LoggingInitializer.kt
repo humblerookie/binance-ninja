@@ -15,7 +15,6 @@ class LoggingInitializer : Initializer {
       options.environment = BuildKonfig.SENTRY_ENVIRONMENT
       options.debug = BuildKonfig.IS_DEBUG
     }
-    Sentry.captureException(RuntimeException("Test Exception"))
     Napier.base(DebugAntilog())
   }
 }

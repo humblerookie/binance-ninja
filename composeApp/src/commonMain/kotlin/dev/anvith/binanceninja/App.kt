@@ -9,15 +9,10 @@ import me.tatarka.inject.annotations.Inject
 
 typealias App = @Composable () -> Unit
 
-typealias  AppPresenterFactory = ()-> AppPresenter
+typealias AppPresenterFactory = () -> AppPresenter
+
 @Inject
 @Composable
 fun App(factory: AppPresenterFactory) {
-    BinanceNinjaTheme {
-        ProvideStrings {
-            Navigator(AppScreen().bind(factory))
-        }
-    }
+  BinanceNinjaTheme { ProvideStrings { Navigator(AppScreen().bind(factory)) } }
 }
-
-

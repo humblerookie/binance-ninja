@@ -16,7 +16,6 @@ abstract class PresenterTab : Tab, ScreenLifecycleProvider, PresenterScreen {
   override fun getLifecycleOwner() = lifecycleOwner
 }
 
-
 abstract class LifecyclePresenterScreen : ScreenLifecycleProvider, PresenterScreen {
 
   override val key = uniqueScreenKey

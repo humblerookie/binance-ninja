@@ -133,6 +133,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
 
   var textAlign: TextAlign? = (textModifier as? TextModifierImpl)?.textAlign
     private set
+
   var decoration: TextDecoration? = (textModifier as? TextModifierImpl)?.decoration
     private set
 
@@ -184,7 +185,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
       lineHeight = modifier.lineHeight ?: lineHeight
       weight = modifier.weight ?: weight
       letterSpacing = modifier.letterSpacing ?: letterSpacing
-      decoration = modifier.decoration?: decoration
+      decoration = modifier.decoration ?: decoration
       TextModifierImpl(this)
     } else {
       modifier

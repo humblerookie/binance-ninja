@@ -61,6 +61,6 @@ per [this issue](/https://github.com/evant/kotlin-inject/issues/320/)
 ## TODOs 📝
 
 - Add tests
-- Add linter/formatting checks
+- ~~Add linter/formatting checks~~
 - Add CI/CD
 + ~~Add Crypto Selection Feature~~

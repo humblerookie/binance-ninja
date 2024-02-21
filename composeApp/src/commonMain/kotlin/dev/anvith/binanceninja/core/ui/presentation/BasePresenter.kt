@@ -23,76 +23,76 @@ import kotlinx.coroutines.sync.Mutex
 
 abstract class BasePresenter<S, E>(dispatcherProvider: DispatcherProvider) {
 
-    fun dispatchEvent(event: E) = onEvent(event)
+  fun dispatchEvent(event: E) = onEvent(event)
 
-    protected abstract fun onEvent(event: E)
+  protected abstract fun onEvent(event: E)
 
-    abstract fun initState(): S
+  abstract fun initState(): S
 
-    private val _state = MutableStateFlow(this.initState())
+  private val _state = MutableStateFlow(this.initState())
 
-    private val mutex = Mutex()
+  private val mutex = Mutex()
 
-    protected fun updateState(map: (S) -> S) = _state.update(map)
+  protected fun updateState(map: (S) -> S) = _state.update(map)
 
-    private val presenterScope: CoroutineScope =
-        CoroutineScope(
-            SupervisorJob() +
-                    dispatcherProvider.main() +
-                    CoroutineExceptionHandler { _, exception ->
-                        logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
-                    }
-        )
-
-    val state: StateFlow<S> =
-        _state.stateIn(
-            presenterScope,
-            SharingStarted.WhileSubscribed(5000),
-            this.initState(),
-        )
-
-    protected fun launch(
-        context: CoroutineContext = EmptyCoroutineContext,
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.() -> Unit
-    ): Job = presenterScope.launch(context, start, block)
-
-    val currentState: S
-        get() = _state.value
-
-    val viewEvents
-        get() = _events.receiveAsFlow()
-
-    private val _events =
-        Channel<SideEffect>(
-            capacity = Int.MAX_VALUE,
-            onBufferOverflow = BufferOverflow.SUSPEND,
-            onUndeliveredElement = { logE("Missed view event $it") },
-        )
-
-    protected fun sideEffect(event: SideEffect) {
-        launch { _events.send(event) }
-    }
-
-    companion object {
-        val presenters = mutableMapOf<String, BasePresenter<*, *>>()
-
-        inline fun <reified T> getPresenter(key: String, factory: () -> T): T {
-            return (presenters[key] ?: factory()) as T
+  private val presenterScope: CoroutineScope =
+    CoroutineScope(
+      SupervisorJob() +
+        dispatcherProvider.main() +
+        CoroutineExceptionHandler { _, exception ->
+          logE("Coroutine threw $exception: \n${exception.stackTraceToString()}")
         }
+    )
 
-        inline fun removeBinding(key: String) {
-            presenters.remove(key)?.onCleared()
-        }
+  val state: StateFlow<S> =
+    _state.stateIn(
+      presenterScope,
+      SharingStarted.WhileSubscribed(5000),
+      this.initState(),
+    )
+
+  protected fun launch(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+  ): Job = presenterScope.launch(context, start, block)
+
+  val currentState: S
+    get() = _state.value
+
+  val viewEvents
+    get() = _events.receiveAsFlow()
+
+  private val _events =
+    Channel<SideEffect>(
+      capacity = Int.MAX_VALUE,
+      onBufferOverflow = BufferOverflow.SUSPEND,
+      onUndeliveredElement = { logE("Missed view event $it") },
+    )
+
+  protected fun sideEffect(event: SideEffect) {
+    launch { _events.send(event) }
+  }
+
+  companion object {
+    val presenters = mutableMapOf<String, BasePresenter<*, *>>()
+
+    inline fun <reified T> getPresenter(key: String, factory: () -> T): T {
+      return (presenters[key] ?: factory()) as T
     }
 
-    fun bind(screen: PresenterScreen) {
-        if (!presenters.containsKey(screen.key)) {
-            presenters[screen.key] = this
-        }
+    inline fun removeBinding(key: String) {
+      presenters.remove(key)?.onCleared()
     }
+  }
 
-    fun onCleared() {
-        presenterScope.cancel()
+  fun bind(screen: PresenterScreen) {
+    if (!presenters.containsKey(screen.key)) {
+      presenters[screen.key] = this
     }
+  }
+
+  fun onCleared() {
+    presenterScope.cancel()
+  }
 }

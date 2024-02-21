@@ -29,113 +29,109 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class CreateFilterPresenter(
-    private val filterRepository: FilterRepository,
-    private val currencyRepository: CurrencyRepository,
-    private val validator: CreateFilterValidator,
-    private val errorHandler: ErrorHandler,
-    private val permissionHandler: PermissionHandler,
-    dispatcherProvider: DispatcherProvider,
+  private val filterRepository: FilterRepository,
+  private val currencyRepository: CurrencyRepository,
+  private val validator: CreateFilterValidator,
+  private val errorHandler: ErrorHandler,
+  private val permissionHandler: PermissionHandler,
+  dispatcherProvider: DispatcherProvider,
 ) : BasePresenter<State, Event>(dispatcherProvider) {
 
-    override fun initState(): State = State()
-    private var cryptoCurrenciesJob: Job? = null
+  override fun initState(): State = State()
 
-    init {
+  private var cryptoCurrenciesJob: Job? = null
+
+  init {
+    fetchCurrencies()
+    subscribeToUserCurrency()
+  }
+
+  private fun subscribeToUserCurrency() {
+    launch {
+      currencyRepository.userCurrencyUpdates().collectLatest {
+        updateState { state -> state.copy(selectedFiatCurrency = it) }
         fetchCurrencies()
-        subscribeToUserCurrency()
+      }
     }
+  }
 
-    private fun subscribeToUserCurrency() {
-        launch {
-            currencyRepository.userCurrencyUpdates().collectLatest {
-                updateState { state -> state.copy(selectedFiatCurrency = it) }
-                fetchCurrencies()
+  private fun fetchCurrencies() {
+    cryptoCurrenciesJob?.cancel()
+    cryptoCurrenciesJob = launch {
+      updateState { state -> state.copy(isLoading = true, errorMessage = null) }
+      currencyRepository.getCryptoCurrenciesForFiat(onSyncFailure = ::onFetchError).collect {
+        updateState { state ->
+          val selected =
+            if (it.any { it.code == state.selectedCryptoCurrency?.code }) {
+              state.selectedCryptoCurrency
+            } else {
+              it.firstOrNull()
             }
+          state.copy(
+            currencies = it.lock(),
+            selectedCryptoCurrency = selected,
+            isLoading = it.isEmpty()
+          )
         }
+      }
     }
+  }
 
-    private fun fetchCurrencies() {
-        cryptoCurrenciesJob?.cancel()
-        cryptoCurrenciesJob = launch {
-            updateState { state -> state.copy(isLoading = true, errorMessage = null) }
-            currencyRepository.getCryptoCurrenciesForFiat(onSyncFailure = ::onFetchError).collect {
-                updateState { state ->
-                    val selected = if (it.any { it.code == state.selectedCryptoCurrency?.code }) {
-                        state.selectedCryptoCurrency
-                    } else {
-                        it.firstOrNull()
-                    }
-                    state.copy(
-                        currencies = it.lock(),
-                        selectedCryptoCurrency = selected,
-                        isLoading = it.isEmpty()
-                    )
-                }
+  private fun onFetchError(throwable: Throwable) {
+    updateState { it.copy(errorMessage = errorHandler.getMessage(throwable), isLoading = false) }
+  }
+
+  override fun onEvent(event: Event) {
+    when (event) {
+      is CreateFilter -> createFilter()
+      is PriceChanged -> updateState { state -> state.copy(price = event.value) }
+      is AmountChanged -> updateState { state -> state.copy(amount = event.value) }
+      is ActionTypeChanged -> updateState { state -> state.copy(isBuy = event.isBuy) }
+      is FromMerchant -> updateState { state -> state.copy(fromMerchant = event.value) }
+      is FromVerifiedMerchant -> updateState { state -> state.copy(isRestricted = event.value) }
+      is SelectCurrency -> {
+        updateState { state -> state.copy(selectedCryptoCurrency = event.value) }
+      }
+      Retry -> fetchCurrencies()
+    }
+  }
+
+  private fun createFilter() {
+    val errors = validator.validate(currentState)
+    if (errors.isEmpty()) {
+      permissionHandler.hasPermission(NOTIFICATION) { hasPermission ->
+        if (hasPermission) {
+          saveFilter()
+        } else {
+          permissionHandler.requestPermission(
+            NOTIFICATION,
+            onGranted = { saveFilter() },
+            onDenied = {
+              saveFilter()
+              sideEffect(MiscEffect(NotificationPermissionDenied))
             }
+          )
         }
+      }
     }
+    updateState { state -> state.copy(validationErrors = errors) }
+  }
 
-    private fun onFetchError(throwable: Throwable) {
-        updateState {
-            it.copy(
-                errorMessage = errorHandler.getMessage(throwable),
-                isLoading = false
-            )
-        }
+  private fun saveFilter() {
+    val model =
+      FilterModel(
+        isBuy = currentState.isBuy,
+        price = currentState.price.text.trim().toDouble(),
+        fromMerchant = currentState.fromMerchant,
+        isProMerchant = currentState.isRestricted,
+        amount = currentState.amount.text.toDouble(),
+        sourceCurrency = currentState.selectedCryptoCurrency!!.code,
+        targetCurrency = currentState.selectedFiatCurrency!!.code
+      )
+
+    launch {
+      filterRepository.insertFilter(model)
+      sideEffect(MiscEffect(FilterCreationSuccess))
     }
-
-    override fun onEvent(event: Event) {
-        when (event) {
-            is CreateFilter -> createFilter()
-            is PriceChanged -> updateState { state -> state.copy(price = event.value) }
-            is AmountChanged -> updateState { state -> state.copy(amount = event.value) }
-            is ActionTypeChanged -> updateState { state -> state.copy(isBuy = event.isBuy) }
-            is FromMerchant -> updateState { state -> state.copy(fromMerchant = event.value) }
-            is FromVerifiedMerchant -> updateState { state -> state.copy(isRestricted = event.value) }
-            is SelectCurrency -> {
-                updateState { state -> state.copy(selectedCryptoCurrency = event.value) }
-            }
-
-            Retry -> fetchCurrencies()
-        }
-    }
-
-    private fun createFilter() {
-        val errors = validator.validate(currentState)
-        if (errors.isEmpty()) {
-            permissionHandler.hasPermission(NOTIFICATION) { hasPermission ->
-                if (hasPermission) {
-                    saveFilter()
-                } else {
-                    permissionHandler.requestPermission(
-                        NOTIFICATION,
-                        onGranted = { saveFilter() },
-                        onDenied = {
-                            saveFilter()
-                            sideEffect(MiscEffect(NotificationPermissionDenied))
-                        }
-                    )
-                }
-            }
-        }
-        updateState { state -> state.copy(validationErrors = errors) }
-    }
-
-    private fun saveFilter() {
-        val model =
-            FilterModel(
-                isBuy = currentState.isBuy,
-                price = currentState.price.text.trim().toDouble(),
-                fromMerchant = currentState.fromMerchant,
-                isProMerchant = currentState.isRestricted,
-                amount = currentState.amount.text.toDouble(),
-                sourceCurrency = currentState.selectedCryptoCurrency!!.code,
-                targetCurrency = currentState.selectedFiatCurrency!!.code
-            )
-
-        launch {
-            filterRepository.insertFilter(model)
-            sideEffect(MiscEffect(FilterCreationSuccess))
-        }
-    }
+  }
 }

@@ -12,4 +12,5 @@ object ApiConstants {
 object Endpoints {
   const val CURRENCY = "v1/friendly/c2c/trade-rule/fiat-list"
   const val ORDERS = "v2/friendly/c2c/adv/search"
+  const val CONFIG = "v2/friendly/c2c/portal/config"
 }

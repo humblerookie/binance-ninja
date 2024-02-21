@@ -6,4 +6,6 @@ data class CurrencyModel(
   val icon: String?,
   val country: String?,
   val isFiat: Boolean,
+  val isSelected: Boolean,
+  val availableFor: String? = null
 )

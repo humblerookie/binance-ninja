@@ -59,205 +59,218 @@ import org.jetbrains.compose.resources.painterResource
 
 object ViewFiltersScreen : PresenterTab() {
 
-  override val key = uniqueScreenKey
-  override val options: TabOptions
-    @Composable
-    get() {
-      val title = strings.tabViewFilters
-      val icon = rememberVectorPainter(image = Icons.Default.List)
-      return remember { TabOptions(index = 1u, title = title, icon = icon) }
-    }
-
-  @Composable
-  override fun Content() {
-    val presenter: ViewFiltersPresenter = getPresenter()
-    val state by presenter.state.collectAsState()
-    when {
-      state.isLoading -> {
-        Loader()
-      }
-      state.error != null -> {
-        MessageSection(state.error!!)
-      }
-      state.filters.isEmpty() -> {
-        MessageSection(strings.errorNoFilters)
-      }
-      else -> {
-        Filters(state.filters, state.currencySymbols) { presenter.dispatchEvent(RemoveFilter(it)) }
-      }
-    }
-  }
-
-  @OptIn(ExperimentalResourceApi::class)
-  @Composable
-  private fun MessageSection(message: String) {
-    Column(
-      modifier = Modifier.fillMaxSize().padding(Dimens.keyline),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      Image(
-        painterResource(Assets.EMPTY),
-        null,
-        contentScale = ContentScale.Inside,
-        modifier = Modifier.size(Dimens.iconNormal),
-        colorFilter = ColorFilter.tint(ThemeColors.onSurface)
-      )
-      Space(height = Dimens.spaceXLarge)
-      AppText.Body1(
-        text = message,
-      )
-    }
-  }
-
-  @Composable
-  private fun Loader() {
-    Box(modifier = Modifier.fillMaxSize()) {
-      CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-    }
-  }
-
-  @Composable
-  private fun Filters(
-    filters: IList<FilterModel>,
-    currencies: IMap<String, String>,
-    onRemove: (FilterModel) -> Unit
-  ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.keyline)) {
-      item { Space(Dimens.keyline) }
-      items(filters) { filter -> FilterItem(filter, currencies, onRemove) }
-      item { Space(Dimens.keyline) }
-    }
-  }
-
-  @OptIn(ExperimentalResourceApi::class)
-  @Composable
-  fun FilterItem(
-    item: FilterModel,
-    currencies: IMap<String, String>,
-    onRemove: (FilterModel) -> Unit
-  ) {
-    Card(Modifier.padding(horizontal = Dimens.keyline)) {
-      Row(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.listBlockNormal),
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Column(
-          modifier = Modifier.padding(Dimens.keyline).weight(1f),
-        ) {
-          val symbol = currencies[item.targetCurrency] ?: item.targetCurrency
-          Row {
-            val (icon, color) =
-              if (item.isBuy) {
-                Assets.BUY to AppThemeColors.onColor
-              } else {
-                Assets.SELL to AppThemeColors.offColor
-              }
-
-            Image(
-              painterResource(icon),
-              null,
-              contentScale = ContentScale.Fit,
-              modifier = Modifier.size(Dimens.iconSmall).align(Alignment.Bottom),
-              colorFilter = ColorFilter.tint(color)
-            )
-            Space(width = Dimens.spaceSmall, modifier = Modifier)
-            AppText.H2(
-              text = item.sourceCurrency,
-              modifier = Modifier.weight(1f).align(Alignment.Bottom),
-            )
-          }
-          Space(height = Dimens.spaceSmall, modifier = Modifier)
-
-          Row(horizontalArrangement = Arrangement.Center) {
-            Column(
-              modifier = Modifier.align(Alignment.Bottom).weight(1f),
-            ) {
-              AppText.Body1(
-                text = strings.labelPrice,
-                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38()),
-              )
-              AppText.H3(
-                text = symbol + formatPrecision(item.price),
-              )
-            }
-            Column(
-              modifier = Modifier.align(Alignment.Bottom).weight(1f),
-            ) {
-              AppText.Body1(
-                text = strings.labelAmount,
-                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38())
-              )
-              AppText.H3(
-                text = symbol + formatPrecision(item.amount) + "0",
-              )
-            }
-          }
-
-          if (item.isProMerchant || item.fromMerchant) {
-            Space(height = Dimens.spaceNormal)
-            Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
-              if (item.fromMerchant) {
-                Label(strings.labelMerchant, Icons.Filled.CheckCircle)
-                Space(width = Dimens.spaceNormal)
-              }
-
-              if (item.isProMerchant) {
-                Label(strings.labelProMerchant, Icons.Filled.Lock)
-              }
-            }
-          }
+    override val key = uniqueScreenKey
+    override val options: TabOptions
+        @Composable
+        get() {
+            val title = strings.tabViewFilters
+            val icon = rememberVectorPainter(image = Icons.Default.List)
+            return remember { TabOptions(index = 1u, title = title, icon = icon) }
         }
-        Space(width = Dimens.spaceSmall)
-        DeleteButton { onRemove(item) }
-      }
-    }
-  }
 
-  @Composable
-  private fun RowScope.DeleteButton(modifier: Modifier = Modifier, onRemove: () -> Unit) {
-    IconButton(
-      onClick = onRemove,
-      modifier =
-        modifier
-          .size(Dimens.iconTiny)
-          .background(
-            color = ThemeColors.secondary,
-            shape =
-              RoundedCornerShape(topEnd = Dimens.radiusButton, bottomStart = Dimens.radiusButton)
-          )
-          .padding(Dimens.spaceTiny)
-          .align(Alignment.Top)
-    ) {
-      Icon(
-        Icons.Filled.Clear,
-        tint = ThemeColors.onPrimary,
-        contentDescription = strings.labelRemove,
-      )
-    }
-  }
+    @Composable
+    override fun Content() {
+        val presenter: ViewFiltersPresenter = getPresenter()
+        val state by presenter.state.collectAsState()
+        when {
+            state.isLoading -> {
+                Loader()
+            }
 
-  @Composable
-  private fun Label(label: String, icon: ImageVector) {
-    val contentColor = ThemeColors.primary
-    Row(
-      modifier =
-        Modifier.border(
-            width = Dimens.borderSmall,
-            color = contentColor,
-            shape = RoundedCornerShape(Dimens.radiusHuge)
-          )
-          .padding(horizontal = Dimens.spaceSmall, vertical = Dimens.spaceXSmall),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Icon(
-        icon,
-        contentDescription = label,
-        Modifier.size(AssistChipDefaults.IconSize),
-        tint = contentColor,
-      )
-      Space(width = Dimens.spaceTiny)
-      AppText.Subtitle(label, textModifier = TextModifier.color(contentColor))
+            state.error != null -> {
+                MessageSection(state.error!!)
+            }
+
+            state.filters.isEmpty() -> {
+                MessageSection(strings.errorNoFilters)
+            }
+
+            else -> {
+                Filters(
+                    state.filters,
+                    state.currencySymbols
+                ) { presenter.dispatchEvent(RemoveFilter(it)) }
+            }
+        }
     }
-  }
+
+    @OptIn(ExperimentalResourceApi::class)
+    @Composable
+    private fun MessageSection(message: String) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(Dimens.keyline),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(Assets.EMPTY),
+                null,
+                contentScale = ContentScale.Inside,
+                modifier = Modifier.size(Dimens.iconNormal),
+                colorFilter = ColorFilter.tint(ThemeColors.onSurface)
+            )
+            Space(height = Dimens.spaceXLarge)
+            AppText.Body1(
+                text = message,
+            )
+        }
+    }
+
+    @Composable
+    private fun Loader() {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
+
+    @Composable
+    private fun Filters(
+        filters: IList<FilterModel>,
+        currencies: IMap<String, String>,
+        onRemove: (FilterModel) -> Unit
+    ) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.keyline)) {
+            item { Space(Dimens.keyline) }
+            items(filters) { filter -> FilterItem(filter, currencies, onRemove) }
+            item { Space(Dimens.keyline) }
+        }
+    }
+
+    @OptIn(ExperimentalResourceApi::class)
+    @Composable
+    fun FilterItem(
+        item: FilterModel,
+        currencies: IMap<String, String>,
+        onRemove: (FilterModel) -> Unit
+    ) {
+        Card(Modifier.padding(horizontal = Dimens.keyline)) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .defaultMinSize(minHeight = Dimens.listBlockNormal),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.padding(Dimens.keyline).weight(1f),
+                ) {
+                    val symbol = currencies[item.targetCurrency] ?: item.targetCurrency
+                    Row {
+                        val (icon, color) =
+                            if (item.isBuy) {
+                                Assets.BUY to AppThemeColors.onColor
+                            } else {
+                                Assets.SELL to AppThemeColors.offColor
+                            }
+
+                        Image(
+                            painterResource(icon),
+                            null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.size(Dimens.iconSmall).align(Alignment.Bottom),
+                            colorFilter = ColorFilter.tint(color)
+                        )
+                        Space(width = Dimens.spaceSmall, modifier = Modifier)
+                        AppText.H2(
+                            text = item.sourceCurrency,
+                            modifier = Modifier.weight(1f).align(Alignment.Bottom),
+                        )
+                    }
+                    Space(height = Dimens.spaceSmall, modifier = Modifier)
+
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Bottom).weight(1f),
+                        ) {
+                            AppText.Body1(
+                                text = strings.labelPrice,
+                                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38()),
+                            )
+                            AppText.H3(
+                                text = symbol + formatPrecision(item.price),
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.align(Alignment.Bottom).weight(1f),
+                        ) {
+                            AppText.Body1(
+                                text = strings.labelAmount,
+                                textModifier = TextModifier.color(ThemeColors.onSurface.alpha38())
+                            )
+                            AppText.H3(
+                                text = symbol + formatPrecision(item.amount) + "0",
+                            )
+                        }
+                    }
+
+                    if (item.isProMerchant || item.fromMerchant) {
+                        Space(height = Dimens.spaceNormal)
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            if (item.fromMerchant) {
+                                Label(strings.labelMerchant, Icons.Filled.CheckCircle)
+                                Space(width = Dimens.spaceNormal)
+                            }
+
+                            if (item.isProMerchant) {
+                                Label(strings.labelProMerchant, Icons.Filled.Lock)
+                            }
+                        }
+                    }
+                }
+                Space(width = Dimens.spaceSmall)
+                DeleteButton { onRemove(item) }
+            }
+        }
+    }
+
+    @Composable
+    private fun RowScope.DeleteButton(modifier: Modifier = Modifier, onRemove: () -> Unit) {
+        IconButton(
+            onClick = onRemove,
+            modifier =
+            modifier
+                .size(Dimens.iconTiny)
+                .background(
+                    color = ThemeColors.secondary,
+                    shape =
+                    RoundedCornerShape(
+                        topEnd = Dimens.radiusButton,
+                        bottomStart = Dimens.radiusButton
+                    )
+                )
+                .padding(Dimens.spaceTiny)
+                .align(Alignment.Top)
+        ) {
+            Icon(
+                Icons.Filled.Clear,
+                tint = ThemeColors.onPrimary,
+                contentDescription = strings.labelRemove,
+            )
+        }
+    }
+
+    @Composable
+    private fun Label(label: String, icon: ImageVector) {
+        val contentColor = ThemeColors.primary
+        Row(
+            modifier =
+            Modifier.border(
+                width = Dimens.borderSmall,
+                color = contentColor,
+                shape = RoundedCornerShape(Dimens.radiusHuge)
+            )
+                .padding(horizontal = Dimens.spaceSmall, vertical = Dimens.spaceXSmall),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = label,
+                Modifier.size(AssistChipDefaults.IconSize),
+                tint = contentColor,
+            )
+            Space(width = Dimens.spaceTiny)
+            AppText.Subtitle(label, textModifier = TextModifier.color(contentColor))
+        }
+    }
 }

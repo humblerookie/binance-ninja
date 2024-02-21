@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
@@ -35,6 +36,8 @@ interface TextModifier {
   fun weight(weight: FontWeight): TextModifier
 
   fun letterSpacing(spacing: TextUnit): TextModifier
+
+  fun decoration(decoration: TextDecoration): TextModifier
 
   fun copy(modifier: TextModifier): TextModifier
 
@@ -69,6 +72,10 @@ interface TextModifier {
 
     override fun letterSpacing(spacing: TextUnit): TextModifier {
       return TextModifierImpl().letterSpacing(spacing)
+    }
+
+    override fun decoration(decoration: TextDecoration): TextModifier {
+      return TextModifierImpl().decoration(decoration)
     }
 
     override fun copy(modifier: TextModifier): TextModifier {
@@ -126,6 +133,8 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
 
   var textAlign: TextAlign? = (textModifier as? TextModifierImpl)?.textAlign
     private set
+  var decoration: TextDecoration? = (textModifier as? TextModifierImpl)?.decoration
+    private set
 
   override fun font(font: FontFamily): TextModifier {
     this.font = font
@@ -162,6 +171,11 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
     return this
   }
 
+  override fun decoration(decoration: TextDecoration): TextModifier {
+    this.decoration = decoration
+    return this
+  }
+
   override fun copy(modifier: TextModifier): TextModifier {
     return if (modifier is TextModifierImpl) {
       font = modifier.font ?: font
@@ -170,6 +184,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
       lineHeight = modifier.lineHeight ?: lineHeight
       weight = modifier.weight ?: weight
       letterSpacing = modifier.letterSpacing ?: letterSpacing
+      decoration = modifier.decoration?: decoration
       TextModifierImpl(this)
     } else {
       modifier
@@ -187,6 +202,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
       fontWeight = weight ?: FontWeight.Normal,
       letterSpacing = letterSpacing ?: TextUnit.Unspecified,
       textAlign = textAlign ?: TextAlign.Start,
+      style = TextStyle(textDecoration = decoration ?: TextDecoration.None),
       modifier = modifier
     )
   }
@@ -201,6 +217,8 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
       fontFamily = font ?: getFontFamily(),
       fontWeight = weight ?: FontWeight.Normal,
       letterSpacing = letterSpacing ?: TextUnit.Unspecified,
+      textAlign = textAlign ?: TextAlign.Start,
+      style = TextStyle(textDecoration = decoration ?: TextDecoration.None),
       modifier = modifier
     )
   }
@@ -214,6 +232,7 @@ open class TextModifierImpl(textModifier: TextModifier? = null) : TextModifier {
       fontFamily = font ?: getFontFamily(),
       fontWeight = weight ?: FontWeight.Normal,
       letterSpacing = letterSpacing ?: TextUnit.Unspecified,
+      textDecoration = decoration ?: TextDecoration.None
     )
   }
 

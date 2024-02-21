@@ -1,0 +1,4 @@
+import kotlin.Boolean;
+
+ALTER TABLE Currency ADD COLUMN isSelected INTEGER AS Boolean NOT NULL DEFAULT 0;
+ALTER TABLE Currency ADD COLUMN availableFor TEXT;

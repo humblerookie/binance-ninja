@@ -12,44 +12,44 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ViewFiltersPresenter(
-  private val filterRepository: FilterRepository,
-  private val currencyRepository: CurrencyRepository,
-  private val dispatcherProvider: DispatcherProvider,
+    private val filterRepository: FilterRepository,
+    private val currencyRepository: CurrencyRepository,
+    private val dispatcherProvider: DispatcherProvider,
 ) : BasePresenter<State, Event>(dispatcherProvider) {
 
-  init {
-    subscribeToFilters()
-    subscribeToCurrencies()
-  }
-
-  private fun subscribeToCurrencies() {
-    launch(dispatcherProvider.io()) {
-      currencyRepository.getAllFiatCurrencies(onSyncFailure = {}).collect { currencies ->
-        val currencyMap = currencies.associate { it.code to it.symbol }.lock()
-        updateState { state -> state.copy(currencySymbols = currencyMap) }
-      }
+    init {
+        subscribeToFilters()
+        subscribeToCurrencies()
     }
-  }
 
-  private fun subscribeToFilters() {
-    launch(dispatcherProvider.io()) {
-      updateState { it.copy(isLoading = true) }
-      filterRepository.getFilters().collect {
-        updateState { state -> state.copy(filters = it.lock(), isLoading = false) }
-      }
-    }
-  }
-
-  override fun initState(): State = State()
-
-  override fun onEvent(event: Event) {
-    when (event) {
-      is RemoveFilter -> {
+    private fun subscribeToCurrencies() {
         launch(dispatcherProvider.io()) {
-          filterRepository.removeFilter(event.filter.id)
-          updateState { it.copy(filters = (it.filters - event.filter).lock()) }
+            currencyRepository.getAllCurrencies().collect { currencies ->
+                val currencyMap = currencies.associate { it.code to it.symbol }.lock()
+                updateState { state -> state.copy(currencySymbols = currencyMap) }
+            }
         }
-      }
     }
-  }
+
+    private fun subscribeToFilters() {
+        launch(dispatcherProvider.io()) {
+            updateState { it.copy(isLoading = true) }
+            filterRepository.getFilters().collect {
+                updateState { state -> state.copy(filters = it.lock(), isLoading = false) }
+            }
+        }
+    }
+
+    override fun initState(): State = State()
+
+    override fun onEvent(event: Event) {
+        when (event) {
+            is RemoveFilter -> {
+                launch(dispatcherProvider.io()) {
+                    filterRepository.removeFilter(event.filter.id)
+                    updateState { it.copy(filters = (it.filters - event.filter).lock()) }
+                }
+            }
+        }
+    }
 }

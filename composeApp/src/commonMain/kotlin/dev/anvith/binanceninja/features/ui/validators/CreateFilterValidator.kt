@@ -15,7 +15,7 @@ class CreateFilterValidator {
     if (price == null) {
       errors[ErrorTarget.PRICE] = true
     }
-    if (state.selectedCurrency == null) {
+    if (state.selectedFiatCurrency == null) {
       errors[ErrorTarget.CURRENCY] = true
     }
     val amount = state.amount.text.trim().toDoubleOrNull()

@@ -26,42 +26,44 @@ import dev.anvith.binanceninja.domain.models.CurrencyModel
 
 @Composable
 fun CurrencyDialog(
-    currencies: IList<CurrencyModel>,
-    selectedCurrency: CurrencyModel?,
-    onClick: (CurrencyModel) -> Unit,
-    onDismiss: () -> Unit,
+  currencies: IList<CurrencyModel>,
+  selectedCurrency: CurrencyModel?,
+  onClick: (CurrencyModel) -> Unit,
+  onDismiss: () -> Unit,
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Column {
-            val listState = rememberLazyListState()
-            Row (modifier = Modifier.background(ThemeColors.primary).fillMaxWidth().padding(Dimens.keyline)){
-                AppText.H3(strings.selectCurrency, textModifier = TextModifier.color(ThemeColors.onPrimary))
-            }
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight().background(ThemeColors.surface),
-                state = listState
-            ) {
-                items(currencies) { currency ->
-                    val isSelected = currency.code == selectedCurrency?.code
-                    AppText.Button1(
-                        text = "${currency.code} (${currency.symbol})",
-                        textModifier =
-                        TextModifier.color(if (isSelected) ThemeColors.primary else ThemeColors.onSurface),
-                        modifier =
-                        Modifier.fillMaxWidth()
-                            .background(ThemeColors.surface)
-                            .clickable {
-                                onClick(currency)
-                                onDismiss()
-                            }
-                            .padding(horizontal = Dimens.keyline, vertical = Dimens.keyline)
-                    )
-                    Divider(color = ThemeColors.onSurface.alpha12())
+  Dialog(
+    onDismissRequest = onDismiss,
+    properties = DialogProperties(usePlatformDefaultWidth = false)
+  ) {
+    Column {
+      val listState = rememberLazyListState()
+      Row(
+        modifier = Modifier.background(ThemeColors.primary).fillMaxWidth().padding(Dimens.keyline)
+      ) {
+        AppText.H3(strings.selectCurrency, textModifier = TextModifier.color(ThemeColors.onPrimary))
+      }
+      LazyColumn(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight().background(ThemeColors.surface),
+        state = listState
+      ) {
+        items(currencies) { currency ->
+          val isSelected = currency.code == selectedCurrency?.code
+          AppText.Button1(
+            text = "${currency.code} (${currency.symbol})",
+            textModifier =
+              TextModifier.color(if (isSelected) ThemeColors.primary else ThemeColors.onSurface),
+            modifier =
+              Modifier.fillMaxWidth()
+                .background(ThemeColors.surface)
+                .clickable {
+                  onClick(currency)
+                  onDismiss()
                 }
-            }
+                .padding(horizontal = Dimens.keyline, vertical = Dimens.keyline)
+          )
+          Divider(color = ThemeColors.onSurface.alpha12())
         }
+      }
     }
+  }
 }

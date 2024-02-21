@@ -53,107 +53,95 @@ import dev.anvith.binanceninja.domain.models.CurrencyModel
 import dev.anvith.binanceninja.features.ui.core.components.CurrencyDialog
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-
 class AppScreen : LifecyclePresenterScreen() {
-    @Composable
-    override fun Content() {
-        val presenter: AppPresenter = getPresenter()
-        val state by presenter.state.collectAsState()
-        TabNavigator(presenter.getChildren().first()) {
-            val snackbarHostState = remember { SnackbarHostState() }
-            val scope = rememberCoroutineScope()
-            val provider by remember { mutableStateOf(getSnackbar(scope, snackbarHostState)) }
+  @Composable
+  override fun Content() {
+    val presenter: AppPresenter = getPresenter()
+    val state by presenter.state.collectAsState()
+    TabNavigator(presenter.getChildren().first()) {
+      val snackbarHostState = remember { SnackbarHostState() }
+      val scope = rememberCoroutineScope()
+      val provider by remember { mutableStateOf(getSnackbar(scope, snackbarHostState)) }
 
-            LaunchedEffect(state.errorMessage) {
-                state.errorMessage?.let { error ->
-                    provider.showSnack(error, getLocaleStrings().actionRetry, false) {
-                        if (it == ActionPerformed) {
-                            presenter.dispatchEvent(Retry)
-                        }
-                    }
-                }
+      LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { error ->
+          provider.showSnack(error, getLocaleStrings().actionRetry, false) {
+            if (it == ActionPerformed) {
+              presenter.dispatchEvent(Retry)
             }
-            CompositionLocalProvider(LocalSnackbarProvider provides provider) {
-                Scaffold(
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    content = { Box(modifier = Modifier.padding(it)) { CurrentTab() } },
-                    topBar = {
-                        AppBar(state.currencies, state.userCurrency) {
-                            presenter.dispatchEvent(SelectCurrency(it))
-                        }
-                    },
-                    bottomBar = {
-                        NavigationBar {
-                            presenter.getChildren().map { TabNavigationItem(it) }
-                        }
-                    },
-                )
-            }
+          }
         }
-    }
-
-    @Composable
-    private fun RowScope.TabNavigationItem(tab: Tab) {
-        val tabNavigator = LocalTabNavigator.current
-        NavigationBarItem(selected = tabNavigator.current == tab,
-            onClick = { tabNavigator.current = tab },
-            icon = {
-                Icon(
-                    painter = tab.options.icon!!,
-                    contentDescription = tab.options.title,
-                )
-            })
-    }
-
-
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-    @Composable
-    private fun AppBar(
-        currencies: IList<CurrencyModel>,
-        selectedCurrency: CurrencyModel?,
-        onCurrencySelected: (CurrencyModel) -> Unit,
-    ) {
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        TopAppBar(
-            title = {
-                AppText.H3(
-                    text = strings.appName, textModifier = TextModifier.color(ThemeColors.onPrimary)
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary),
-            actions = {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-                    expanded = true
-                }.padding(horizontal = Dimens.keyline)) {
-                    val color = ThemeColors.onPrimary
-                    Icon(
-                        Icons.Outlined.Edit,
-                        tint = color,
-                        modifier = Modifier.size(Dimens.iconMicro),
-                        contentDescription = strings.changeFiat
-                    )
-                    Space(width = Dimens.spaceMin)
-                    AppText.Body1(
-                        text = selectedCurrency?.symbol.orEmpty(),
-                        textModifier = TextModifier.color(color)
-                            .size(Dimens.textXLarge).decoration(TextDecoration.Underline),
-                    )
-
-
-                }
-
+      }
+      CompositionLocalProvider(LocalSnackbarProvider provides provider) {
+        Scaffold(
+          snackbarHost = { SnackbarHost(snackbarHostState) },
+          content = { Box(modifier = Modifier.padding(it)) { CurrentTab() } },
+          topBar = {
+            AppBar(state.currencies, state.userCurrency) {
+              presenter.dispatchEvent(SelectCurrency(it))
             }
+          },
+          bottomBar = { NavigationBar { presenter.getChildren().map { TabNavigationItem(it) } } },
         )
-        if (expanded) {
-            CurrencyDialog(
-                currencies,
-                selectedCurrency,
-                onClick = onCurrencySelected
-            ) {
-                expanded = false
-            }
-        }
+      }
     }
+  }
 
+  @Composable
+  private fun RowScope.TabNavigationItem(tab: Tab) {
+    val tabNavigator = LocalTabNavigator.current
+    NavigationBarItem(
+      selected = tabNavigator.current == tab,
+      onClick = { tabNavigator.current = tab },
+      icon = {
+        Icon(
+          painter = tab.options.icon!!,
+          contentDescription = tab.options.title,
+        )
+      }
+    )
+  }
+
+  @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+  @Composable
+  private fun AppBar(
+    currencies: IList<CurrencyModel>,
+    selectedCurrency: CurrencyModel?,
+    onCurrencySelected: (CurrencyModel) -> Unit,
+  ) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    TopAppBar(
+      title = {
+        AppText.H3(text = strings.appName, textModifier = TextModifier.color(ThemeColors.onPrimary))
+      },
+      colors = TopAppBarDefaults.topAppBarColors(containerColor = ThemeColors.primary),
+      actions = {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.clickable { expanded = true }.padding(horizontal = Dimens.keyline)
+        ) {
+          val color = ThemeColors.onPrimary
+          Icon(
+            Icons.Outlined.Edit,
+            tint = color,
+            modifier = Modifier.size(Dimens.iconMicro),
+            contentDescription = strings.changeFiat
+          )
+          Space(width = Dimens.spaceMin)
+          AppText.Body1(
+            text = selectedCurrency?.symbol.orEmpty(),
+            textModifier =
+              TextModifier.color(color)
+                .size(Dimens.textXLarge)
+                .decoration(TextDecoration.Underline),
+          )
+        }
+      }
+    )
+    if (expanded) {
+      CurrencyDialog(currencies, selectedCurrency, onClick = onCurrencySelected) {
+        expanded = false
+      }
+    }
+  }
 }
-

@@ -18,7 +18,7 @@ You can set filters, and It’ll alert you when any order satisfies the filter c
 
 </p>
 
-## Project Configuration
+## Project Configuration 🛠️
 
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
@@ -37,24 +37,28 @@ You can set filters, and It’ll alert you when any order satisfies the filter c
 Learn more
 about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
 
-## Libraries
+## Libraries 📚
 
-[KTOR](/https://ktor.io/docs/http-client-multiplatform.html/) | [KotlinX](/https://github.com/Kotlin/kotlinx.serialization/) | [SQLDelight](https://cashapp.github.io/sqldelight/2.0.0)
+- [KTOR](/https://ktor.io/docs/http-client-multiplatform.html/)
+- [KotlinX](/https://github.com/Kotlin/kotlinx.serialization/) 
+- [SQLDelight](https://cashapp.github.io/sqldelight/2.0.0)
+- [Napier](https://github.com/AAkira/Napier)
+- [Kotlin Inject](/https://github.com/evant/kotlin-inject/)
+- [Voyager](https://github.com/adrielcafe/voyager)
+- [Compose](https://developer.android.com/jetpack/compose)
+- [Notification Desktop](/https://github.com/dorkbox/Notify/)
+- [Lyricist](/https://github.com/adrielcafe/lyricist/)
 
-[Napier](https://github.com/AAkira/Napier) | [Kotlin Inject](/https://github.com/evant/kotlin-inject/) | [Voyager](https://github.com/adrielcafe/voyager)
-
-[Compose](https://developer.android.com/jetpack/compose) | [Notification Desktop](/https://github.com/dorkbox/Notify/) | [Lyricist](/https://github.com/adrielcafe/lyricist/)
-
-## Credits
+## Credits 🙌
 
 [Twine](https://github.com/msasikanth/twine) served as a good starting point for me.
 
-## Known Issues
+## Known Issues ⚠️
 
 Kotlin Inject: Currently there are issues with scoping and redundant application of scopes as
 per [this issue](/https://github.com/evant/kotlin-inject/issues/320/)
 
-## TODO
+## TODOs 📝
 
 - Add tests
 - Add linter/formatting checks

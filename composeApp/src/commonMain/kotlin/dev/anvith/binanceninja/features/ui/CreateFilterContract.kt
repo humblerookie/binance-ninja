@@ -6,7 +6,6 @@ import dev.anvith.binanceninja.core.ui.data.IMap
 import dev.anvith.binanceninja.core.ui.data.emptyIList
 import dev.anvith.binanceninja.core.ui.data.emptyIMap
 import dev.anvith.binanceninja.domain.models.CurrencyModel
-import dev.anvith.binanceninja.domain.models.ErrorStrings
 
 interface CreateFilterContract {
   sealed class Event {
@@ -35,8 +34,9 @@ interface CreateFilterContract {
     val amount: TextFieldValue = TextFieldValue(),
     val validationErrors: IMap<ErrorTarget, Boolean> = emptyIMap(),
     val currencies: IList<CurrencyModel> = emptyIList(),
-    val selectedCurrency: CurrencyModel? = null,
-    val errorMessage: ErrorStrings? = null,
+    val selectedFiatCurrency: CurrencyModel? = null,
+    val selectedCryptoCurrency: CurrencyModel? = null,
+    val errorMessage: String? = null,
     val isLoading: Boolean = false,
   )
 

@@ -5,20 +5,31 @@ CREATE TABLE Currency (
     symbol TEXT NOT NULL,
     icon TEXT,
     country TEXT,
-    isFiat INTEGER AS Boolean NOT NULL DEFAULT 0
+    isFiat INTEGER AS Boolean NOT NULL DEFAULT 0,
+    isSelected INTEGER AS Boolean NOT NULL DEFAULT 0,
+    availableFor TEXT
 );
 
 getAllCurrencies:
 SELECT * FROM Currency ORDER BY code ASC;
 
+getDefaultFiatCurrency:
+SELECT * FROM Currency WHERE isFiat = 1 AND isSelected = 1 LIMIT  1;
+
 addCurrency:
-INSERT OR REPLACE INTO Currency (code,symbol,icon,country,isFiat) VALUES ?;
+INSERT OR REPLACE INTO Currency (code,symbol,icon,country,isFiat,isSelected,availableFor) VALUES ?;
+
+resetSelections:
+UPDATE Currency SET isSelected = 0;
 
 getFiatCurrencies:
 SELECT * FROM Currency WHERE isFiat = 1 ORDER BY code ASC;
 
 getCryptoCurrencies:
-SELECT * FROM Currency WHERE isFiat = 0 ORDER BY code ASC;
+SELECT * FROM Currency WHERE isFiat = 0;
+
+getCryptoCurrenciesForFiat:
+SELECT * FROM Currency WHERE isFiat = 0 AND availableFor=?;
 
 removeAll:
 DELETE FROM Currency;

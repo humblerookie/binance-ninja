@@ -74,4 +74,9 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.splashscreen)
+    constraints{
+        implementation(libs.androidx.fragment){
+            because("Gms library depends on outdated androidx")
+        }
+    }
 }

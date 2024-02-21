@@ -16,6 +16,16 @@ abstract class PresenterTab : Tab, ScreenLifecycleProvider, PresenterScreen {
   override fun getLifecycleOwner() = lifecycleOwner
 }
 
+
+abstract class LifecyclePresenterScreen : ScreenLifecycleProvider, PresenterScreen {
+
+  override val key = uniqueScreenKey
+
+  private val lifecycleOwner = AppScreenLifecycleOwner()
+
+  override fun getLifecycleOwner() = lifecycleOwner
+}
+
 class AppScreenLifecycleOwner : ScreenLifecycleOwner, JavaSerializable {
   override fun onDispose(screen: Screen) {
     if (screen is PresenterScreen) {

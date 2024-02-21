@@ -1,7 +1,7 @@
 package dev.anvith.binanceninja.domain.mappers
 
+import dev.anvith.binanceninja.core.res.getLocaleStrings
 import dev.anvith.binanceninja.di.AppScope
-import dev.anvith.binanceninja.domain.models.ErrorStrings
 import io.ktor.client.network.sockets.SocketTimeoutException
 import me.tatarka.inject.annotations.Inject
 
@@ -9,11 +9,13 @@ import me.tatarka.inject.annotations.Inject
 @AppScope
 class ErrorHandler {
 
-  fun getMessage(throwable: Throwable): ErrorStrings {
-    return when (throwable) {
-      is SocketTimeoutException -> ErrorStrings.Network
-      is Exception -> ErrorStrings.Generic
-      else -> ErrorStrings.Generic
+    fun getMessage(throwable: Throwable): String {
+        return getLocaleStrings().run {
+            when (throwable) {
+                is SocketTimeoutException -> errorNetwork
+                is Exception -> errorCommon
+                else -> errorSync
+            }
+        }
     }
-  }
 }

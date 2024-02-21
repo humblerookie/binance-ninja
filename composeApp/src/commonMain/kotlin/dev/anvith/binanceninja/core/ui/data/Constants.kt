@@ -5,6 +5,7 @@ object Constants {
   const val FORMAT_PRECISION = 8
 
   const val INR = "INR"
+  const val INR_SYMBOL = "₹"
   const val USDT = "USDT"
   const val RETRIES = 5
   const val PARALLELISM = 2
@@ -18,5 +19,6 @@ object Constants {
     const val EMPTY = "empty-asset.xml"
     const val BUY = "ic-buy.xml"
     const val SELL = "ic-sell.xml"
+    const val SWITCH = "ic-switch.xml"
   }
 }

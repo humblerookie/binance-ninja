@@ -24,32 +24,33 @@ about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform
 
 ### Libraries
 
-[KTOR - Networking](https://ktor.io/docs/http-client-multiplatform.html)
+	[KTOR - Networking](/https://ktor.io/docs/http-client-multiplatform.html/)
 
-[KotlinX Serialization](https://github.com/Kotlin/kotlinx.serialization)
+	[KotlinX Serialization](/https://github.com/Kotlin/kotlinx.serialization/)
 
-[SQLDelight Persistence](https://cashapp.github.io/sqldelight/2.0.0)
+	[SQLDelight Persistence](https://cashapp.github.io/sqldelight/2.0.0)
 
-[Napier - Logging](https://github.com/AAkira/Napier)
+	[Napier - Logging](https://github.com/AAkira/Napier)
 
-[Kotlin Inject](https://github.com/evant/kotlin-inject)
+	[Kotlin Inject](/https://github.com/evant/kotlin-inject/)
 
-[Voyager Navigation](https://github.com/adrielcafe/voyager)
+	[Voyager Navigation](https://github.com/adrielcafe/voyager)
 
-[Compose](https://developer.android.com/jetpack/compose)
+	[Compose](https://developer.android.com/jetpack/compose)
 
-[Notification Desktop](https://github.com/dorkbox/Notify)
+	[Notification Desktop](/https://github.com/dorkbox/Notify/)
 
-[Lyricist Localization](https://github.com/adrielcafe/lyricist)
+	[Lyricist Localization](/https://github.com/adrielcafe/lyricist/)
 
 ### Credits
 [Twine](https://github.com/msasikanth/twine)
 
 ### Known Issues
-Kotlin Inject: Currently there are issues with scoping and redundant application of scopes as per [this issue](https://github.com/evant/kotlin-inject/issues/320)
+Kotlin Inject: Currently there are issues with scoping and redundant application of scopes as per [this issue](/https://github.com/evant/kotlin-inject/issues/320/)
 
 ### TODO
 - Add tests
 - Add linter/formatting checks
 - Add CI/CD
 - Add Crypto Selection Feature
+

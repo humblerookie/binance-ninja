@@ -2,6 +2,7 @@ package dev.anvith.binanceninja.core.res
 
 interface Strings {
 
+  val changeFiat: String
   val appName: String
   val actionBuy: String
   val actionSell: String

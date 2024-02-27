@@ -2,7 +2,5 @@
 <resources>
 
     <drawable name="ic_notification"/>
-    <string name="match_notification_title" />
-    <string name="match_notification_description" />
 
 </resources>

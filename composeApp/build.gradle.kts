@@ -23,8 +23,12 @@ plugins {
 val bundleId = extra["bundleId"] as String
 
 kotlin {
-  androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
-  jvm("desktop")
+  androidTarget {
+    compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
+  }
+  jvm("desktop"){
+    compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
+  }
 
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries {
@@ -115,6 +119,10 @@ android {
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
   buildFeatures { compose = true }
   composeOptions { kotlinCompilerExtensionVersion = "1.5.6" }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
 }
 
 compose.desktop {

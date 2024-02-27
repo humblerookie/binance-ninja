@@ -18,7 +18,4 @@ interface AppContract {
     val isLoading: Boolean = false,
   )
 
-  sealed class Effect {
-    data class DisplayError(val message: String) : Effect()
-  }
 }

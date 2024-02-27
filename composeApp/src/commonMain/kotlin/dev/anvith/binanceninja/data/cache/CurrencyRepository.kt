@@ -8,8 +8,8 @@ import dev.anvith.binanceninja.data.remote.PeerToPeerApi
 import dev.anvith.binanceninja.data.remote.models.AreaType.P2P
 import dev.anvith.binanceninja.data.remote.models.CurrencyApiModel
 import dev.anvith.binanceninja.data.remote.models.PeerToPeerConfigRequest
-import dev.anvith.binanceninja.data.remote.models.whenError
-import dev.anvith.binanceninja.data.remote.models.whenSuccess
+import dev.anvith.binanceninja.data.remote.core.whenError
+import dev.anvith.binanceninja.data.remote.core.whenSuccess
 import dev.anvith.binanceninja.di.AppScope
 import dev.anvith.binanceninja.domain.mappers.CurrencyMapper
 import dev.anvith.binanceninja.domain.models.CurrencyModel

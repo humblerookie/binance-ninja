@@ -56,7 +56,7 @@ about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform
 ## Known Issues ⚠️
 
 Kotlin Inject: Currently there are issues with scoping and redundant application of scopes as
-per [this issue](/https://github.com/evant/kotlin-inject/issues/320/)
+per [this issue](https://github.com/evant/kotlin-inject/issues/320/)
 
 ## TODOs 📝
 

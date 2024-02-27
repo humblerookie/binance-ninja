@@ -12,8 +12,12 @@ val getEnv = extra["getEnv"] as (String) -> String
 val bundleId = extra["bundleId"] as String
 
 kotlin {
-    jvm()
-    androidTarget()
+    jvm(){
+        compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
+    }
+    androidTarget(){
+        compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
+    }
 }
 sentry {
     autoInstallation {
@@ -54,6 +58,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures { buildConfig = true }
     packaging {
         resources { excludes.add("/META-INF/{AL2.0,LGPL2.1}") }

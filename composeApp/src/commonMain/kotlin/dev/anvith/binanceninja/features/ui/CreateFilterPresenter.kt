@@ -70,7 +70,7 @@ class CreateFilterPresenter(
           state.copy(
             currencies = it.lock(),
             selectedCryptoCurrency = selected,
-            isLoading = it.isEmpty()
+            isLoading = false
           )
         }
       }

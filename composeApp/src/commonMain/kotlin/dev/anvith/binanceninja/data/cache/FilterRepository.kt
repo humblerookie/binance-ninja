@@ -4,8 +4,8 @@ import app.cash.sqldelight.coroutines.asFlow
 import dev.anvith.binanceninja.core.concurrency.DispatcherProvider
 import dev.anvith.binanceninja.core.logE
 import dev.anvith.binanceninja.data.remote.PeerToPeerApi
-import dev.anvith.binanceninja.data.remote.models.ApiResult.Failure
-import dev.anvith.binanceninja.data.remote.models.ApiResult.Success
+import dev.anvith.binanceninja.data.remote.core.ApiResult.Failure
+import dev.anvith.binanceninja.data.remote.core.ApiResult.Success
 import dev.anvith.binanceninja.di.AppScope
 import dev.anvith.binanceninja.domain.mappers.FilterMapper
 import dev.anvith.binanceninja.domain.mappers.OrderMapper

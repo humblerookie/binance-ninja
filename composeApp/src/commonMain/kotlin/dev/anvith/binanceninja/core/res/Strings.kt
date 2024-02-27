@@ -32,4 +32,6 @@ interface Strings {
   val actionRetry: String
   val permissionDeniedNotifications: String
   val labelAmount: String
+  val matchNotificationTitle: String
+  val matchNotificationDescription: String
 }

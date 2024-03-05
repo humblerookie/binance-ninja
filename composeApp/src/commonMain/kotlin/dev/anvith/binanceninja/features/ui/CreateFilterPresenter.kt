@@ -67,11 +67,7 @@ class CreateFilterPresenter(
             } else {
               it.firstOrNull()
             }
-          state.copy(
-            currencies = it.lock(),
-            selectedCryptoCurrency = selected,
-            isLoading = false
-          )
+          state.copy(currencies = it.lock(), selectedCryptoCurrency = selected, isLoading = false)
         }
       }
     }

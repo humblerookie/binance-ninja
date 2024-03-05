@@ -11,7 +11,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import dev.anvith.binanceninja.R
+import dev.anvith.binanceninja.core.R
 import dev.anvith.binanceninja.core.res.getLocaleStrings
 import dev.anvith.binanceninja.core.ui.data.Constants
 import dev.anvith.binanceninja.data.cache.UserDataStore

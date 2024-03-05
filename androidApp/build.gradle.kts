@@ -12,10 +12,10 @@ val getEnv = extra["getEnv"] as (String) -> String
 val bundleId = extra["bundleId"] as String
 
 kotlin {
-    jvm(){
+    jvm() {
         compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
     }
-    androidTarget(){
+    androidTarget() {
         compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
     }
 }
@@ -50,7 +50,10 @@ android {
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
 
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         debug { applicationIdSuffix = ".debug" }
     }
@@ -68,6 +71,13 @@ android {
         jniLibs.excludes.add("lib/mips64/libsqlite3x.so")
         jniLibs.excludes.add("lib/armeabi/libsqlite3x.so")
     }
+    lint {
+        lintConfig = file("$rootDir/lint.xml")
+        ignoreWarnings = false
+        abortOnError = true
+        htmlReport = true
+    }
+
 }
 
 dependencies {
@@ -79,8 +89,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.splashscreen)
-    constraints{
-        implementation(libs.androidx.fragment){
+    constraints {
+        implementation(libs.androidx.fragment) {
             because("Gms library depends on outdated androidx")
         }
     }

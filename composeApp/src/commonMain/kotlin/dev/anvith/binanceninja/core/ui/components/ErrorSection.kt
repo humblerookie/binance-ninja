@@ -23,27 +23,27 @@ import org.jetbrains.compose.resources.painterResource
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ErrorSection(message: String, onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(Dimens.keyline),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painterResource(Assets.EMPTY),
-            null,
-            contentScale = ContentScale.Inside,
-            modifier = Modifier.size(Dimens.iconNormal),
-            colorFilter = ColorFilter.tint(ThemeColors.onSurface)
-        )
-        Space(height = Dimens.spaceXLarge)
-        AppText.Body1(
-            text = message,
-        )
-        Space(height = Dimens.spaceLarge)
-        PrimaryButton(
-            label = strings.actionRetry,
-            onClick = onRetry,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
+  Column(
+    modifier = Modifier.fillMaxSize().padding(Dimens.keyline),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Image(
+      painterResource(Assets.EMPTY),
+      null,
+      contentScale = ContentScale.Inside,
+      modifier = Modifier.size(Dimens.iconNormal),
+      colorFilter = ColorFilter.tint(ThemeColors.onSurface)
+    )
+    Space(height = Dimens.spaceXLarge)
+    AppText.Body1(
+      text = message,
+    )
+    Space(height = Dimens.spaceLarge)
+    PrimaryButton(
+      label = strings.actionRetry,
+      onClick = onRetry,
+      modifier = Modifier.fillMaxWidth()
+    )
+  }
 }

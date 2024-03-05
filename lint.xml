@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Ignore everything in the test source set -->
+    <issue id="all">
+        <ignore path="\*/test/\*" />
+    </issue>
+
+    <!-- Ignore the UselessLeaf issue in the given file -->
+    <issue id="IconXmlAndPng">
+        <ignore path="androidApp/src/androidMain/res/drawable-anydpi/ic_notification.xml" />
+        <ignore path="androidApp/src/androidMain/res/drawable-*/ic_notification.png" />
+    </issue>
+
+    <!-- Change the severity of hardcoded strings to "error" -->
+    <issue id="HardcodedText" severity="error" />
+</lint>

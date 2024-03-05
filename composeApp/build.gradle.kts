@@ -23,12 +23,8 @@ plugins {
 val bundleId = extra["bundleId"] as String
 
 kotlin {
-  androidTarget {
-    compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
-  }
-  jvm("desktop"){
-    compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } }
-  }
+  androidTarget { compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } } }
+  jvm("desktop") { compilations.all { kotlinOptions { jvmTarget = extra["java"].toString() } } }
 
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries {
@@ -108,7 +104,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
 }
 
 android {
-  namespace = bundleId
+  namespace = "$bundleId.core"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -122,6 +118,13 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+  }
+
+  lint {
+    lintConfig = file("$rootDir/lint.xml")
+    ignoreWarnings = false
+    abortOnError = true
+    htmlReport = true
   }
 }
 

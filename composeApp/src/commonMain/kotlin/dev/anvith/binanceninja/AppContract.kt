@@ -17,5 +17,4 @@ interface AppContract {
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
   )
-
 }

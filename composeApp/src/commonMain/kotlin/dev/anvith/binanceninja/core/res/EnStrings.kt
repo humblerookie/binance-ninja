@@ -39,6 +39,6 @@ val EnStrings =
     override val permissionDeniedNotifications =
       "Notification permission was denied, You may not receive order match notifications. Please enable them from app settings."
 
-    override val  matchNotificationTitle= "Match Notifications"
-    override val  matchNotificationDescription= "All order notifications that match your filter."
+    override val matchNotificationTitle = "Match Notifications"
+    override val matchNotificationDescription = "All order notifications that match your filter."
   }

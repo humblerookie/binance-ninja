@@ -33,80 +33,63 @@ import dev.anvith.binanceninja.domain.models.CurrencyModel
 
 @Composable
 fun CurrencyDialog(
-    currencies: IList<CurrencyModel>,
-    selectedCurrency: CurrencyModel?,
-    isLoading: Boolean = false,
-    onClick: (CurrencyModel) -> Unit,
-    onDismiss: () -> Unit,
-    onRetry: () -> Unit,
+  currencies: IList<CurrencyModel>,
+  selectedCurrency: CurrencyModel?,
+  isLoading: Boolean = false,
+  onClick: (CurrencyModel) -> Unit,
+  onDismiss: () -> Unit,
+  onRetry: () -> Unit,
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Column {
-            val listState = rememberLazyListState()
-            Row(
-                modifier = Modifier.background(ThemeColors.primary).fillMaxWidth()
-                    .padding(Dimens.keyline)
-            ) {
-                AppText.H3(
-                    strings.selectCurrency,
-                    textModifier = TextModifier.color(ThemeColors.onPrimary)
-                )
+  Dialog(
+    onDismissRequest = onDismiss,
+    properties = DialogProperties(usePlatformDefaultWidth = false)
+  ) {
+    Column {
+      val listState = rememberLazyListState()
+      Row(
+        modifier = Modifier.background(ThemeColors.primary).fillMaxWidth().padding(Dimens.keyline)
+      ) {
+        AppText.H3(strings.selectCurrency, textModifier = TextModifier.color(ThemeColors.onPrimary))
+      }
+      Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        when {
+          isLoading ->
+            Box(modifier = Modifier.fillMaxSize()) {
+              CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-                when {
-                    isLoading -> Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-
-                    currencies.isEmpty() -> ErrorSection(
-                        message = strings.errorSync,
-                        onRetry = onRetry
-                    )
-
-                    else -> CurrencyList(
-                        listState,
-                        currencies,
-                        selectedCurrency,
-                        onClick,
-                        onDismiss
-                    )
-                }
-            }
-
+          currencies.isEmpty() -> ErrorSection(message = strings.errorSync, onRetry = onRetry)
+          else -> CurrencyList(listState, currencies, selectedCurrency, onClick, onDismiss)
         }
+      }
     }
+  }
 }
 
 @Composable
 private fun CurrencyList(
-    listState: LazyListState,
-    currencies: IList<CurrencyModel>,
-    selectedCurrency: CurrencyModel?,
-    onClick: (CurrencyModel) -> Unit,
-    onDismiss: () -> Unit
+  listState: LazyListState,
+  currencies: IList<CurrencyModel>,
+  selectedCurrency: CurrencyModel?,
+  onClick: (CurrencyModel) -> Unit,
+  onDismiss: () -> Unit
 ) {
-    LazyColumn(
-        state = listState
-    ) {
-        items(currencies) { currency ->
-            val isSelected = currency.code == selectedCurrency?.code
-            AppText.Button1(
-                text = "${currency.code} (${currency.symbol})",
-                textModifier =
-                TextModifier.color(if (isSelected) ThemeColors.primary else ThemeColors.onSurface),
-                modifier =
-                Modifier.fillMaxWidth()
-                    .background(ThemeColors.surface)
-                    .clickable {
-                        onClick(currency)
-                        onDismiss()
-                    }
-                    .padding(horizontal = Dimens.keyline, vertical = Dimens.keyline)
-            )
-            Divider(color = ThemeColors.onSurface.alpha12())
-        }
+  LazyColumn(state = listState) {
+    items(currencies) { currency ->
+      val isSelected = currency.code == selectedCurrency?.code
+      AppText.Button1(
+        text = "${currency.code} (${currency.symbol})",
+        textModifier =
+          TextModifier.color(if (isSelected) ThemeColors.primary else ThemeColors.onSurface),
+        modifier =
+          Modifier.fillMaxWidth()
+            .background(ThemeColors.surface)
+            .clickable {
+              onClick(currency)
+              onDismiss()
+            }
+            .padding(horizontal = Dimens.keyline, vertical = Dimens.keyline)
+      )
+      Divider(color = ThemeColors.onSurface.alpha12())
     }
+  }
 }

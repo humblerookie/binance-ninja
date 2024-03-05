@@ -27,3 +27,8 @@ jobs:
 
       - name: Run Lint
         run: ./gradlew lint
+
+      - name: Run DB Checks
+        run: |
+          ./gradlew generateCommonMainNinjaDatabaseSchema;
+          ./gradlew verifySqlDelightMigration;

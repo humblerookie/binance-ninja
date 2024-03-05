@@ -16,14 +16,18 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Set up JDK 17
-        - uses: actions/checkout@v4
-        - uses: actions/setup-java@v4
-          with:
-            distribution: 'zulu'
-            java-version: '17'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
       - name: Run Spotless
         run: ./gradlew spotlessCheck
 
       - name: Run Lint
         run: ./gradlew lint
+
+      - name: Run DB Checks
+        run: |
+          ./gradlew generateCommonMainNinjaDatabaseSchema;
+          ./gradlew verifySqlDelightMigration;

@@ -1,11 +1,11 @@
 # Binance Ninja
 
-Binance Ninja is a Kotlin Multiplatform project targeting Android, iOS, Desktop. It enables you to
+Binance Ninja is a [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) project targeting Android, iOS, Desktop. It enables you to
 get notifications for P2P orders on Binance.
 
 You can set filters, and It’ll alert you when any order satisfies the filter criteria.
 
-## Get it
+## Download the App
 
 <a href='https://play.google.com/store/apps/details?id=dev.anvith.binanceninja&pcampaignid=github'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200px"/></a>
 
@@ -34,8 +34,6 @@ You can set filters, and It’ll alert you when any order satisfies the filter c
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for
   your project.
 
-Learn more
-about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
 
 ## Libraries 📚
 
@@ -53,14 +51,9 @@ about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform
 
 [Twine](https://github.com/msasikanth/twine) served as a good starting point for me.
 
-## Known Issues ⚠️
-
-Kotlin Inject: Currently there are issues with scoping and redundant application of scopes as
-per [this issue](https://github.com/evant/kotlin-inject/issues/320/)
-
 ## TODOs 📝
 
 - Add tests
 - ~~Add linter/formatting checks~~
-- Add CI/CD
+- ~~Add CI/CD~~
 + ~~Add Crypto Selection Feature~~

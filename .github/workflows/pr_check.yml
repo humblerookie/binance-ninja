@@ -3,13 +3,23 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  VERSION: ${{ vars.VERSION }}
+  DESKTOP_VERSION: ${{ vars.DESKTOP_VERSION }}
+  VERSION_CODE: ${{ vars.VERSION_CODE }}
+  IS_DEBUG: ${{ vars.IS_DEBUG }}
+  SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+  SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
+
 concurrency:
   group: pr-check-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  run-checks:
     runs-on: macos-latest
+    environment: development
     steps:
 
       - name: Checkout Branch

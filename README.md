@@ -53,7 +53,4 @@ You can set filters, and It’ll alert you when any order satisfies the filter c
 
 ## TODOs 📝
 
-- Add tests
-- ~~Add linter/formatting checks~~
-- ~~Add CI/CD~~
-+ ~~Add Crypto Selection Feature~~
+- Add testing framework

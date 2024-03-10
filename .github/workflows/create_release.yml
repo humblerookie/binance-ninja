@@ -1,0 +1,60 @@
+name: Create Release
+on:
+  workflow_dispatch:
+
+env:
+  VERSION: ${{ vars.VERSION }}
+  DESKTOP_VERSION: ${{ vars.DESKTOP_VERSION }}
+  VERSION_CODE: ${{ vars.VERSION_CODE }}
+  IS_DEBUG: ${{ vars.IS_DEBUG }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+
+concurrency:
+  group: create-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-checks:
+    runs-on: macos-latest
+    environment: production
+    steps:
+
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Configure signing keys
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: |
+          mkdir release;
+          echo $KEYSTORE | base64 -d > release/release.jks;
+      - name: Run DB Checks
+        run: |
+          ./gradlew generateCommonMainNinjaDatabaseSchema;
+          ./gradlew verifySqlDelightMigration;
+
+      - name: Build Release
+        run: ./gradlew :androidApp:bundleRelease :androidApp:assembleRelease
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Signed Builds
+          path: |
+            androidApp/build/outputs/bundle/release/androidApp-release.aab
+            androidApp/build/outputs/apk/release/androidApp-release.apk
+            androidApp/build/outputs/mapping/release/mapping.txt
+            
+        

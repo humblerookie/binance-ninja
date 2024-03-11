@@ -23,6 +23,7 @@ sentry {
     autoInstallation {
         enabled.set(false)
     }
+    authToken = getEnv("SENTRY_AUTH_TOKEN")
 }
 android {
     namespace = bundleId
@@ -39,7 +40,7 @@ android {
         create("release") {
             storeFile = file("$rootDir/release/release.jks")
             storePassword = getEnv("KEYSTORE_PASSWORD")
-            keyAlias = "ninja"
+            keyAlias =  getEnv("KEY_ALIAS")
             keyPassword = getEnv("KEYSTORE_PASSWORD")
         }
     }

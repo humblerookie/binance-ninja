@@ -8,9 +8,10 @@ env:
   DESKTOP_VERSION: ${{ vars.DESKTOP_VERSION }}
   VERSION_CODE: ${{ vars.VERSION_CODE }}
   IS_DEBUG: ${{ vars.IS_DEBUG }}
-  SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-  SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
   SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
 concurrency:
   group: pr-check-${{ github.ref }}

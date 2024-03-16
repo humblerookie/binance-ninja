@@ -1,11 +1,22 @@
 name: Create Release
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Define version like 0.0.2 or 1.0.0'
+        required: true
+      version_code:
+        description: 'Define version code 10, 20, 30, etc'
+        required: true
+      desktop_version:
+        description: 'Define desktop version like 1.0.0 or higher'
+        required: false
+        default: '1.0.0'
 
 env:
-  VERSION: ${{ vars.VERSION }}
-  DESKTOP_VERSION: ${{ vars.DESKTOP_VERSION }}
-  VERSION_CODE: ${{ vars.VERSION_CODE }}
+  VERSION: ${{ github.event.inputs.version }}
+  DESKTOP_VERSION: ${{ github.event.inputs.desktop_version }}
+  VERSION_CODE: ${{ github.event.inputs.version_code }}
   IS_DEBUG: ${{ vars.IS_DEBUG }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
@@ -56,5 +67,17 @@ jobs:
             androidApp/build/outputs/bundle/release/androidApp-release.aab
             androidApp/build/outputs/apk/release/androidApp-release.apk
             androidApp/build/outputs/mapping/release/mapping.txt
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ SERVICE_ACCOUNT_JSON }}
+          packageName: dev.example.MyApp
+          releaseFiles:  androidApp/build/outputs/bundle/release/androidApp-release.aab
+          track: alpha
+          status: draft
+          userFraction: 0.33
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: androidApp/build/outputs/mapping/release/mapping.txt
             
         
